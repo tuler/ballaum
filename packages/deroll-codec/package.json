@@ -1,0 +1,32 @@
+{
+    "name": "@deroll/codec",
+    "version": "0.1.0",
+    "description": "Cartesi Rollups Typescript Framework",
+    "repository": "http://github.com/tuler/deroll",
+    "author": "Danilo Tuler",
+    "license": "MIT",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "build": "tsup src/index.ts --format esm,cjs --dts",
+        "clean": "rimraf dist",
+        "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
+        "test": "jest --coverage"
+    },
+    "dependencies": {
+        "@ethersproject/abi": "^5.7",
+        "@ethersproject/keccak256": "^5.7",
+        "@ethersproject/strings": "^5.7"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.2.3",
+        "@types/node": "^18.11.10",
+        "jest": "^29.3.1",
+        "rimraf": "^3.0.2",
+        "tsconfig": "*",
+        "ts-jest": "^29.0.3",
+        "tsup": "^6.5.0",
+        "typescript": "^4"
+    }
+}

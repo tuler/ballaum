@@ -1,0 +1,6 @@
+{
+    "fs": {
+        "files": ["dist", "entrypoint.sh"],
+        "size": 131072
+    }
+}

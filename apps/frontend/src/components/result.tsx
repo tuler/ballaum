@@ -1,0 +1,89 @@
+import { FC, useState } from "react";
+import {
+    Button,
+    ButtonGroup,
+    Card,
+    CardBody,
+    CardFooter,
+    HStack,
+    Input,
+    Text,
+    VStack,
+} from "@chakra-ui/react";
+import {
+    useAccount,
+    useContractWrite,
+    usePrepareContractWrite,
+    useWaitForTransaction,
+} from "wagmi";
+import { InputFacet__factory } from "@cartesi/rollups";
+import { Match, SetResultCodec } from "ballaum-common";
+
+type ResultCardProps = {
+    dapp: string;
+    match: Match;
+};
+
+export const ResultCard: FC<ResultCardProps> = ({ dapp, match }) => {
+    const [team1Goals, setTeam1Goals] = useState<string>();
+    const [team2Goals, setTeam2Goals] = useState<string>();
+
+    const { address, isConnected } = useAccount();
+
+    const { config, error } = usePrepareContractWrite({
+        address: dapp,
+        abi: InputFacet__factory.abi,
+        functionName: "addInput",
+        args: [
+            SetResultCodec.encode([
+                "wc2022",
+                match.id,
+                parseInt(team1Goals ?? "0"),
+                parseInt(team2Goals ?? "0"),
+            ]),
+        ],
+    });
+    const { data: tx, write } = useContractWrite(config);
+    const { data: receipt, isError, isLoading } = useWaitForTransaction(tx);
+
+    return (
+        <Card key={match.id} align="center">
+            <CardBody>
+                <VStack>
+                    <HStack spacing={5}>
+                        <Input
+                            width={55}
+                            value={team1Goals}
+                            onChange={(e) => setTeam1Goals(e.target.value)}
+                        />
+                        <Text>x</Text>
+                        <Input
+                            width={55}
+                            value={team2Goals}
+                            onChange={(e) => setTeam2Goals(e.target.value)}
+                        />
+                    </HStack>
+                </VStack>
+            </CardBody>
+            <CardFooter>
+                <VStack>
+                    <Text>{address}</Text>
+                    <ButtonGroup spacing="2">
+                        {isConnected && (
+                            <Button
+                                colorScheme="purple"
+                                isLoading={isLoading}
+                                loadingText="Saving..."
+                                width={120}
+                                disabled={!team1Goals || !team2Goals}
+                                onClick={() => write?.()}
+                            >
+                                Set Result
+                            </Button>
+                        )}
+                    </ButtonGroup>
+                </VStack>
+            </CardFooter>
+        </Card>
+    );
+};

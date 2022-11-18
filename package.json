@@ -1,0 +1,19 @@
+{
+    "name": "ballaum",
+    "repository": "git@github.com:tuler/ballaum.git",
+    "author": "Danilo Tuler <tuler@pobox.com>",
+    "private": true,
+    "license": "MIT",
+    "workspaces": {
+        "packages": [
+            "apps/*",
+            "packages/*"
+        ]
+    },
+    "scripts": {
+        "prettier": "prettier --check **/*.ts"
+    },
+    "devDependencies": {
+        "prettier": "2.7.1"
+    }
+}

@@ -1,0 +1,222 @@
+import "@ethersproject/shims";
+import { BigNumber } from "@ethersproject/bignumber";
+import { getAddress } from "@ethersproject/address";
+import { formatEther, parseEther } from "@ethersproject/units";
+import { mapObject } from "underscore";
+import { DApp, Route } from "@deroll/app";
+import {
+    AddMatchCodec,
+    Match,
+    SetPredictionCodec,
+    SetResultCodec,
+    TerminateCodec,
+} from "ballaum-common";
+
+import { Tournament } from "./tournament";
+
+const rollup_server = tjs.getenv("ROLLUP_HTTP_SERVER_URL");
+console.log("HTTP rollup_server url is " + rollup_server);
+
+const fee = parseEther("0.01");
+const tournaments: Record<string, Tournament> = {};
+const app = new DApp(rollup_server);
+
+// inspect routing
+app.inspectRouter.add<{ tournamentId: string; matchId: string }>(
+    "tournaments/:tournamentId/matches/:matchId",
+    ({ params: { tournamentId, matchId } }) => {
+        const tournament = tournaments[tournamentId];
+        const match = tournament?.getMatch(matchId);
+        if (match) {
+            return JSON.stringify(match);
+        }
+        return JSON.stringify({});
+    }
+);
+
+app.inspectRouter.add<{ id: string }>(
+    "tournaments/:id",
+    ({ params: { id } }) => {
+        const tournament = tournaments[id];
+
+        if (!tournament) {
+            return JSON.stringify({});
+        }
+
+        // remove predictions from returned match (to reduce output)
+        const dehydrator = (match: Match): Omit<Match, "predictions"> => {
+            const { predictions, ...dry } = match;
+            return dry;
+        };
+        const matches = mapObject(tournament.matches, dehydrator);
+
+        return JSON.stringify({
+            id,
+            manager: tournament.manager,
+            matches,
+            scores: tournament.scores,
+        });
+    }
+);
+
+app.inspectRouter.add<{ address: string }>(
+    "wallet/:address",
+    ({ params: { address } }) => {
+        const wallet = app.wallet.wallet(address);
+        return JSON.stringify({
+            ether: wallet.ether.toString(),
+            erc20: mapObject(wallet.erc20, (v) => v.toString()),
+        });
+    }
+);
+
+// input routing
+
+// prediction handler
+app.inputRouter.add(
+    new Route(
+        SetPredictionCodec,
+        ([tournamentId, id, team1Goals, team2Goals], metadata) => {
+            const tournament = tournaments[tournamentId];
+            console.log(
+                `prediction from ${metadata.msg_sender} for match ${id}: ${team1Goals} x ${team2Goals}`
+            );
+            try {
+                if (tournament.scores[metadata.msg_sender] === undefined) {
+                    // first time, transfer fee
+                    app.wallet.transferEther(
+                        metadata.msg_sender,
+                        `tournament:${tournamentId}`,
+                        fee
+                    );
+                }
+
+                tournament.setPrediction(id as string, {
+                    from: metadata.msg_sender,
+                    team1Goals,
+                    team2Goals,
+                    timestamp: metadata.timestamp,
+                });
+                return "accept";
+            } catch (e) {
+                console.error("SetPrediction", e);
+                return "reject";
+            }
+        }
+    )
+);
+
+// setResult handler
+app.inputRouter.add(
+    new Route(
+        SetResultCodec,
+        ([tournamentId, id, team1Goals, team2Goals], metadata) => {
+            const tournament = tournaments[tournamentId];
+            console.log(
+                `setResult from ${metadata.msg_sender} for match ${id}: ${team1Goals} x ${team2Goals}`
+            );
+            try {
+                // check permission
+                if (tournament.manager !== getAddress(metadata.msg_sender)) {
+                    return "reject";
+                }
+
+                tournament.setResult(id as string, {
+                    team1Goals,
+                    team2Goals,
+                });
+                return "accept";
+            } catch (e) {
+                console.error("SetResult", e);
+                return "reject";
+            }
+        }
+    )
+);
+
+app.inputRouter.add(
+    new Route(
+        AddMatchCodec,
+        ([tournamentId, id, team1, team2, start_], metadata) => {
+            const start = start_ as BigNumber;
+            console.log(
+                `addMatch ${id} to tournament ${tournamentId} from ${
+                    metadata.msg_sender
+                } for match ${id}: ${team1} x ${team2} on ${new Date(
+                    start.toNumber()
+                )} (${start.toNumber()})`
+            );
+            try {
+                const tournament = tournaments[tournamentId];
+
+                // check permission
+                if (tournament.manager !== getAddress(metadata.msg_sender)) {
+                    return "reject";
+                }
+
+                tournament.addMatch("AddMatch", {
+                    id,
+                    team1,
+                    team2,
+                    start: start.toNumber(),
+                });
+                return "accept";
+            } catch (e) {
+                console.error("AddMatch", e);
+                return "reject";
+            }
+        }
+    )
+);
+
+app.inputRouter.add(
+    new Route(TerminateCodec, ([tournamentId], metadata) => {
+        try {
+            console.log(`terminating tournament ${tournamentId}`);
+            const tournament = tournaments[tournamentId];
+
+            // check permission
+            if (tournament.manager !== getAddress(metadata.msg_sender)) {
+                return "reject";
+            }
+
+            const winners = tournament.terminate();
+            if (winners.length > 0) {
+                // get pot from tournament wallet
+                const pot = app.wallet.wallet(
+                    `tournament:${tournamentId}`
+                ).ether;
+                console.log(
+                    `distributing pot of ${formatEther(
+                        pot
+                    )} ETH to winners ${winners}`
+                );
+
+                // divide the prize with winners
+                const prize = pot.div(winners.length);
+
+                // move prize to winners wallet
+                winners.forEach((winner) => {
+                    app.wallet.transferEther(
+                        `tournament:${tournamentId}`,
+                        winner,
+                        prize
+                    );
+                });
+            }
+        } catch (e) {
+            console.error("Terminate", e);
+            return "reject";
+        }
+        return "accept";
+    })
+);
+
+// add world cup 2022
+import matches from "./wc2022/matches";
+tournaments["wc2022"] = new Tournament(
+    "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    matches
+);
+
+app.start().catch((e) => process.exit(1));
