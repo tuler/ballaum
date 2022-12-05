@@ -568,6 +568,10 @@ const matches: Match[] = [
         team2: "KOR",
         start: new Date("2022-12-05T23:00:00+04:00").getTime(),
         predictions: {},
+        result: {
+            team1Goals: 4,
+            team2Goals: 1,
+        },
     },
     {
         id: "R165",
@@ -607,6 +611,13 @@ const matches: Match[] = [
     },
     {
         id: "Q1",
+        team1: "BRA",
+        team2: "HRV",
+        start: new Date("2022-12-09T17:00:00+04:00").getTime(),
+        predictions: {},
+    },
+    {
+        id: "Q2",
         team1: "NLD",
         team2: "ARG",
         start: new Date("2022-12-09T23:00:00+04:00").getTime(),
