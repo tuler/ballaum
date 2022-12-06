@@ -89,9 +89,9 @@ describe("Tournament", () => {
             timestamp: new Date("2022-11-20T19:59:00+04:00").getTime(),
         };
         tournament.setPrediction("A11", prediction);
-        expect(
-            tournament.getMatch("A11")?.predictions[prediction.from]
-        ).toEqual(prediction);
+        expect(tournament.matches["A11"]?.predictions[prediction.from]).toEqual(
+            prediction
+        );
     });
 
     test("setResult of unknown match", () => {
@@ -239,7 +239,7 @@ describe("Tournament", () => {
             "0x5": 10,
             "0x6": 0,
         };
-        const predictions = tournament.getMatch("A11")?.predictions!;
+        const predictions = tournament.matches["A11"]?.predictions!;
         const scores = mapObject(predictions, (p) => p.score!);
         expect(scores).toStrictEqual(expected);
         expect(tournament.scores).toStrictEqual(expected);

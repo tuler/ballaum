@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
-import { Match } from "ballaum-common";
+import { Tournament } from "ballaum-common";
 
 import { inspect } from "./inspect";
 
 export const useMatch = (
     tournamentId: string,
     matchId: string
-): Match | undefined => {
-    const [match, setMatch] = useState<Match>();
+): Tournament | undefined => {
+    const [tournament, setTournament] = useState<Tournament>();
 
     useEffect(() => {
-        inspect<Match>(`/tournaments/${tournamentId}/matches/${matchId}`).then(
-            (match) => {
-                if (match) {
-                    setMatch(match);
-                }
+        inspect<Tournament>(
+            `/tournaments/${tournamentId}/matches/${matchId}`
+        ).then((tournament) => {
+            if (tournament) {
+                setTournament(tournament);
             }
-        );
+        });
     }, [tournamentId, matchId]);
 
-    return match;
+    return tournament;
 };

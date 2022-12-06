@@ -47,7 +47,7 @@ export default function Home() {
                     {Object.keys(scores).length > 0 && (
                         <LeaderboardTable scores={scores} />
                     )}
-                    <ul>
+                    <VStack spacing={4}>
                         {list.map((match) => (
                             <NextLink
                                 key={match.id}
@@ -57,7 +57,7 @@ export default function Home() {
                                 <MatchCard match={match} />
                             </NextLink>
                         ))}
-                    </ul>
+                    </VStack>
                     <AddMatchCard dapp={dapp} />
                 </VStack>
             </main>

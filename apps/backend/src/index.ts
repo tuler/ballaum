@@ -26,11 +26,20 @@ app.inspectRouter.add<{ tournamentId: string; matchId: string }>(
     "tournaments/:tournamentId/matches/:matchId",
     ({ params: { tournamentId, matchId } }) => {
         const tournament = tournaments[tournamentId];
-        const match = tournament?.getMatch(matchId);
-        if (match) {
-            return JSON.stringify(match);
+
+        if (!tournament) {
+            return JSON.stringify({});
         }
-        return JSON.stringify({});
+
+        const matches: Record<string, Match> = {};
+        matches[matchId] = tournament.matches[matchId];
+
+        return JSON.stringify({
+            id: tournamentId,
+            manager: tournament.manager,
+            matches,
+            scores: tournament.scores,
+        });
     }
 );
 

@@ -52,10 +52,6 @@ export class Tournament {
         }
     }
 
-    getMatch(id: string): Readonly<Match | undefined> {
-        return this.matches[id];
-    }
-
     setResult(id: string, result: MatchResult) {
         const match = this.matches[id];
 
