@@ -1,10 +1,10 @@
 
 group "default" {
-  targets = ["dapp", "server-localhost", "console"]
+  targets = ["dapp", "server-localhost", "machine-localhost", "console"]
 }
 
 group "goerli" {
-  targets = ["dapp", "server-goerli", "console"]
+  targets = ["dapp", "server-goerli", "machine-goerli", "console"]
 }
 
 target "fs" {
