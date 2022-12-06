@@ -8,7 +8,7 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import { utils } from "ethers";
+import { formatEther } from "@ethersproject/units";
 import { useAccount, usePrepareContractWrite, useContractWrite } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import {
@@ -59,7 +59,7 @@ export const WalletComponent: FC<WalletComponentProps> = ({ dapp }) => {
                     <React.Fragment>
                         <Address address={address} />
                         <Text fontWeight="bold">
-                            {utils.formatEther(wallet.ether)} ETH
+                            {formatEther(wallet.ether)} ETH
                         </Text>
                     </React.Fragment>
                 )}

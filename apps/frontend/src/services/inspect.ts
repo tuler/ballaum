@@ -1,6 +1,6 @@
-import { utils } from "ethers";
+import { toUtf8String } from "@ethersproject/strings";
 
-const baseUrl = "http://localhost:5005/inspect";
+const baseUrl = process.env.NEXT_PUBLIC_INSPECT_URL;
 
 export enum InspectStatus {
     Accepted = "Accepted",
@@ -36,7 +36,7 @@ export const inspect = async <R>(route: string): Promise<R | undefined> => {
             response.reports.length > 0
         ) {
             const report = response.reports[0];
-            const data = utils.toUtf8String(report.payload);
+            const data = toUtf8String(report.payload);
             return JSON.parse(data) as R;
         }
     }

@@ -1,6 +1,8 @@
 import Head from "next/head";
 import { VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { useAccount } from "wagmi";
+import { getAddress } from "@ethersproject/address";
 
 import styles from "../../../styles/Home.module.css";
 import { MatchCard } from "../../components/match";
@@ -13,10 +15,15 @@ import { Header } from "../../components/header";
 export default function Home() {
     const dapp = process.env.NEXT_PUBLIC_DAPP_ADDRESS!;
     const router = useRouter();
+    const { address } = useAccount();
     const { id } = router.query;
 
     const tournament = useMatch("wc2022", id as string);
     const match = tournament?.matches[id as string];
+    const canSetResult =
+        match &&
+        !match.result &&
+        tournament.manager == getAddress(address as string);
     const canPredict = match && match.start > Date.now();
 
     return (
@@ -31,9 +38,7 @@ export default function Home() {
                 <VStack spacing={10}>
                     <Header dapp={dapp} />
                     {match && <MatchCard key={match.id} match={match} />}
-                    {match && !match.result && (
-                        <ResultCard dapp={dapp} match={match} />
-                    )}
+                    {canSetResult && <ResultCard dapp={dapp} match={match} />}
                     {canPredict && <PredictionCard dapp={dapp} match={match} />}
                     {match && (
                         <MatchLeaderboardTable items={match.predictions} />
