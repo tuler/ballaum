@@ -42,7 +42,6 @@
         "@ethersproject/units": "^5.7.0",
         "ballaum-common": "*",
         "buffer": "^6.0.3",
-        "path-to-regexp": "^6.2.1",
         "underscore": "^1.13.6"
     }
 }

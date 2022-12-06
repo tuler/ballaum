@@ -25,7 +25,8 @@
         "@ethersproject/constants": "^5.7",
         "@ethersproject/keccak256": "^5.7",
         "@ethersproject/strings": "^5.7",
-        "@ethersproject/units": "^5.7"
+        "@ethersproject/units": "^5.7",
+        "path-to-regexp": "^6.2.1"
     },
     "devDependencies": {
         "@types/jest": "^29.2.4",
