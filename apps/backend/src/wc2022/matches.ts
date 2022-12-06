@@ -601,6 +601,10 @@ const matches: Match[] = [
         team2: "ESP",
         start: new Date("2022-12-06T19:00:00+04:00").getTime(),
         predictions: {},
+        result: {
+            team1Goals: 0,
+            team2Goals: 0,
+        },
     },
     {
         id: "R168",
@@ -608,19 +612,23 @@ const matches: Match[] = [
         team2: "CHE",
         start: new Date("2022-12-06T23:00:00+04:00").getTime(),
         predictions: {},
+        result: {
+            team1Goals: 6,
+            team2Goals: 1,
+        },
     },
     {
         id: "Q1",
-        team1: "BRA",
-        team2: "HRV",
-        start: new Date("2022-12-09T17:00:00+04:00").getTime(),
+        team1: "NLD",
+        team2: "ARG",
+        start: new Date("2022-12-09T23:00:00+04:00").getTime(),
         predictions: {},
     },
     {
         id: "Q2",
-        team1: "NLD",
-        team2: "ARG",
-        start: new Date("2022-12-09T23:00:00+04:00").getTime(),
+        team1: "BRA",
+        team2: "HRV",
+        start: new Date("2022-12-09T19:00:00+04:00").getTime(),
         predictions: {},
     },
     {
@@ -628,6 +636,13 @@ const matches: Match[] = [
         team1: "GB-ENG",
         team2: "FRA",
         start: new Date("2022-12-10T23:00:00+04:00").getTime(),
+        predictions: {},
+    },
+    {
+        id: "Q4",
+        team1: "MAR",
+        team2: "PRT",
+        start: new Date("2022-12-10T19:00:00+04:00").getTime(),
         predictions: {},
     },
 ];
