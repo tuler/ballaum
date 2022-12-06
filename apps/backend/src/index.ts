@@ -1,4 +1,3 @@
-import "@ethersproject/shims";
 import { BigNumber } from "@ethersproject/bignumber";
 import { getAddress } from "@ethersproject/address";
 import { formatEther, parseEther } from "@ethersproject/units";
