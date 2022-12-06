@@ -36,6 +36,7 @@ RUN build-dapp-fs.sh /opt/cartesi/default.json dapp.json dapp.ext2
 
 # stage to build the initial cartesi machine
 FROM server-manager as machine-server
+ARG CHAIN_ID=31337
 
 WORKDIR /opt/cartesi/dapp
 
@@ -47,7 +48,7 @@ COPY --from=machine-core /opt/cartesi/share/* .
 
 # build machine
 COPY build-machine.sh /usr/local/bin
-RUN build-machine.sh /opt/cartesi/share/dapp-bin
+RUN build-machine.sh /opt/cartesi/share/dapp-bin $CHAIN_ID
 
 # switch back to server-manager workdir
 WORKDIR /opt/cartesi/bin

@@ -1,6 +1,10 @@
 
 group "default" {
-  targets = ["dapp", "server", "console"]
+  targets = ["dapp", "server-localhost", "console"]
+}
+
+group "goerli" {
+  targets = ["dapp", "server-goerli", "console"]
 }
 
 target "fs" {
@@ -11,9 +15,23 @@ target "fs" {
   }
 }
 
-target "server" {
+target "server-localhost" {
   context = "./docker"
   target  = "machine-server"
+  args = {
+    CHAIN_ID = 31337
+  }
+  contexts = {
+    dapp-build = "target:dapp"
+  }
+}
+
+target "server-goerli" {
+  context = "./docker"
+  target  = "machine-server"
+  args = {
+    CHAIN_ID = 5
+  }
   contexts = {
     dapp-build = "target:dapp"
   }
@@ -27,9 +45,23 @@ target "console" {
   }
 }
 
-target "machine" {
+target "machine-localhost" {
   context = "./docker"
   target  = "machine-standalone"
+  args = {
+    CHAIN_ID = 31337
+  }
+  contexts = {
+    dapp-build = "target:dapp"
+  }
+}
+
+target "machine-goerli" {
+  context = "./docker"
+  target  = "machine-standalone"
+  args = {
+    CHAIN_ID = 5
+  }
   contexts = {
     dapp-build = "target:dapp"
   }

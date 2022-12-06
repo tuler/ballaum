@@ -2,6 +2,7 @@
 set -e
 
 MACHINE_DIR=$1
+CHAIN_ID=$2
 ROLLUP_HTTP_SERVER_PORT=5004
 
 cartesi-machine \
@@ -14,5 +15,5 @@ cartesi-machine \
     --rom-image=rom-v0.13.0.bin \
     --store=$MACHINE_DIR \
     -- "cd /mnt/dapp; \
-        ROLLUP_HTTP_SERVER_URL=\"http://127.0.0.1:$ROLLUP_HTTP_SERVER_PORT\" \
+        ROLLUP_HTTP_SERVER_URL=\"http://127.0.0.1:$ROLLUP_HTTP_SERVER_PORT\" CHAIN_ID=$CHAIN_ID \
         ./entrypoint.sh"

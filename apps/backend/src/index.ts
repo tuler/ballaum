@@ -13,12 +13,15 @@ import {
 
 import { Tournament } from "./tournament";
 
-const rollup_server = tjs.getenv("ROLLUP_HTTP_SERVER_URL");
-console.log("HTTP rollup_server url is " + rollup_server);
+const rollupServer = tjs.getenv("ROLLUP_HTTP_SERVER_URL");
+const chainId: number = parseInt(tjs.getenv("CHAIN_ID"));
+
+console.log(`HTTP rollupServer at ${rollupServer}`);
+console.log(`Running machine at chain ${chainId}`);
 
 const fee = parseEther("0.01");
 const tournaments: Record<string, Tournament> = {};
-const app = new DApp(rollup_server);
+const app = new DApp(rollupServer);
 
 // inspect routing
 app.inspectRouter.add<{ tournamentId: string; matchId: string }>(
@@ -222,9 +225,10 @@ app.inputRouter.add(
 
 // add world cup 2022
 import matches from "./wc2022/matches";
-tournaments["wc2022"] = new Tournament(
-    "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-    matches
-);
+const manager: Record<number, string> = {
+    31337: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", // hardhat
+    5: "0x2218B3b41581E3B3fea3d1CB5e37d9C66fa5d3A0", // goerli
+};
+tournaments["wc2022"] = new Tournament(manager[chainId], matches);
 
 app.start().catch((e) => process.exit(1));

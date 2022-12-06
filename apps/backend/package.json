@@ -9,8 +9,8 @@
         "build": "ts-node esbuild.ts",
         "clean": "rimraf dist",
         "dev": "run-s build start:host",
-        "start:docker": "docker run -e ROLLUP_HTTP_SERVER_URL=\"http://127.0.0.1:5004\" --init --network host -v `pwd`:/dapp -w /dapp cartesi/txiki:latest tjs dist/index.js",
-        "start:host": "ROLLUP_HTTP_SERVER_URL=\"http://127.0.0.1:5004\" tjs dist/index.js",
+        "start:docker": "docker run -e ROLLUP_HTTP_SERVER_URL=\"http://127.0.0.1:5004\" -e CHAIN_ID=31337 --init --network host -v `pwd`:/dapp -w /dapp cartesi/txiki:latest tjs dist/index.js",
+        "start:host": "ROLLUP_HTTP_SERVER_URL=\"http://127.0.0.1:5004\" CHAIN_ID=31337 tjs dist/index.js",
         "test": "jest --coverage",
         "tsc": "tsc -noEmit"
     },

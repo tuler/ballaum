@@ -17,6 +17,12 @@ To build the application, run the following command:
 docker buildx bake -f docker-bake.hcl -f docker-bake.override.hcl --load
 ```
 
+To build the application for the goerli network, run the following command:
+
+```shell
+docker buildx bake -f docker-bake.hcl -f docker-bake.override.hcl --load goerli
+```
+
 ## Running
 
 To start the application, execute the following command:
@@ -68,6 +74,7 @@ Once the machine docker image is ready, we can use it to deploy a corresponding 
 
 ```shell
 export NETWORK=<network>
+export CHAIN_ID=<chain_id>
 export MNEMONIC=<user sequence of twelve words>
 export RPC_URL=<https://your.rpc.gateway>
 ```
@@ -76,6 +83,7 @@ For example, to deploy to the Goerli testnet using an Alchemy RPC node, you coul
 
 ```shell
 export NETWORK=goerli
+export CHAIN_ID=5
 export MNEMONIC=<user sequence of twelve words>
 export RPC_URL=https://eth-goerli.alchemyapi.io/v2/<USER_KEY>
 ```
