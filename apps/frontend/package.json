@@ -10,7 +10,7 @@
     },
     "dependencies": {
         "@cartesi/rollups": "0.8.1",
-        "@chakra-ui/react": "^2.4.1",
+        "@chakra-ui/react": "^2.4.3",
         "@deroll/codec": "*",
         "@emotion/react": "^11.10.5",
         "@emotion/styled": "^11.10.5",
@@ -23,7 +23,7 @@
         "ballaum-common": "*",
         "chakra-datetime-picker": "^1.1.7",
         "connectkit": "^1.1.0",
-        "dayjs": "^1.11.6",
+        "dayjs": "^1.11.7",
         "eslint": "8.29.0",
         "eslint-config-next": "13.0.6",
         "ethers": "^5.7.2",
@@ -36,6 +36,6 @@
         "wagmi": "^0.8.10"
     },
     "devDependencies": {
-        "prettier": "2.8.0"
+        "prettier": "2.8.1"
     }
 }
