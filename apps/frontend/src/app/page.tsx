@@ -4,11 +4,12 @@ import { FC } from "react";
 import { Match, Tournament } from "ballaum-common";
 import NextLink from "next/link";
 import { LeaderboardTable } from "../components/leaderboard";
-import { Spinner, VStack } from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 import { AddMatchCard } from "../components/addMatch";
 import { MatchCard } from "../components/match";
 import { useInspect } from "../services/inspect";
 import { useDAppAddress } from "../services/contract";
+import { MatchCardLoading } from "../components/MatchCardLoading";
 
 const HomePage: FC = () => {
     const sort = (match1: Match, match2: Match) => {
@@ -43,8 +44,13 @@ const HomePage: FC = () => {
             {Object.keys(scores).length > 0 && (
                 <LeaderboardTable scores={scores} />
             )}
-            {loading && <Spinner size="xl" />}
             <VStack spacing={4}>
+                {loading && (
+                    <>
+                        <MatchCardLoading />
+                        <MatchCardLoading />
+                    </>
+                )}
                 {list.map((match) => (
                     <NextLink
                         key={match.id}

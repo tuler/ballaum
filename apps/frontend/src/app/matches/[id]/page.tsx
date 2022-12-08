@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { Tournament } from "ballaum-common";
-import { Spinner, VStack } from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 import { getAddress } from "@ethersproject/address";
 
@@ -12,6 +12,7 @@ import { ResultCard } from "../../../components/result";
 import { PredictionCard } from "../../../components/prediction";
 import { MatchLeaderboardTable } from "../../../components/matchLeaderboard";
 import { useDAppAddress } from "../../../services/contract";
+import { MatchCardLoading } from "../../../components/MatchCardLoading";
 
 type PageParams = {
     id: string;
@@ -41,7 +42,7 @@ const MatchPage: FC<PageProps> = ({ params: { id } }) => {
 
     return (
         <VStack spacing={10}>
-            {loading && <Spinner size="xl" />}
+            {loading && <MatchCardLoading />}
             {match && <MatchCard key={match.id} match={match} />}
             {canSetResult && <ResultCard dapp={dapp} match={match} />}
             {canPredict && <PredictionCard dapp={dapp} match={match} />}
