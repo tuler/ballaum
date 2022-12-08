@@ -18,7 +18,6 @@ import {
 import { EtherWithdrawCodec } from "@deroll/codec";
 
 import { useWallet } from "../services/wallet";
-import { useEtherPortal } from "../services/contract";
 import { parseEther } from "ethers/lib/utils.js";
 import { Address } from "./address";
 
@@ -28,8 +27,7 @@ interface WalletComponentProps {
 
 export const WalletComponent: FC<WalletComponentProps> = ({ dapp }) => {
     const { address, isConnected } = useAccount();
-    const wallet = useWallet(address);
-    const etherPortal = useEtherPortal(dapp);
+    const { report: wallet } = useWallet(address);
     const amount = parseEther("0.01");
 
     const depositPrep = usePrepareContractWrite({
@@ -65,7 +63,7 @@ export const WalletComponent: FC<WalletComponentProps> = ({ dapp }) => {
                 )}
             </HStack>
             <HStack>
-                {etherPortal && (
+                {isConnected && (
                     <Button
                         colorScheme="purple"
                         disabled={!deposit.write}

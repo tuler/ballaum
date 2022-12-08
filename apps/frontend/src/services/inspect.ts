@@ -1,6 +1,11 @@
 import { toUtf8String } from "@ethersproject/strings";
+import useSWR, { Key, SWRResponse } from "swr";
+import { useNetwork } from "wagmi";
 
-const baseUrl = process.env.NEXT_PUBLIC_INSPECT_URL;
+const baseURL: Record<number, string> = {
+    5: "https://ballaum.goerli.rollups.staging.cartesi.io/inspect",
+    31337: "http://localhost:5005/inspect",
+};
 
 export enum InspectStatus {
     Accepted = "Accepted",
@@ -27,17 +32,33 @@ export interface InspectResponse {
     metadata: InspectMetadata;
 }
 
-export const inspect = async <R>(route: string): Promise<R | undefined> => {
-    const res = await fetch(`${baseUrl}${route}`);
-    if (res.ok) {
-        const response = (await res.json()) as InspectResponse;
-        if (
-            response.status == InspectStatus.Accepted &&
-            response.reports.length > 0
-        ) {
-            const report = response.reports[0];
-            const data = toUtf8String(report.payload);
-            return JSON.parse(data) as R;
-        }
+type ReportResponse<TReport> = {
+    report?: TReport;
+};
+
+export type UseInspect<TReport> = SWRResponse<InspectResponse> &
+    ReportResponse<TReport>;
+
+export const useInspect = <TReport>(key: Key): UseInspect<TReport> => {
+    // get connected network (if any)
+    const network = useNetwork();
+
+    // fetch only if connected to valid chain
+    const swr = useSWR<InspectResponse>(() =>
+        network.chain ? `${baseURL[network.chain.id]}${key}` : false
+    );
+
+    const response = swr.data;
+    let report = undefined;
+    if (
+        response &&
+        response.status == InspectStatus.Accepted &&
+        response.reports.length > 0
+    ) {
+        const r = response.reports[0];
+        const data = toUtf8String(r.payload);
+        report = JSON.parse(data) as TReport;
     }
+
+    return { ...swr, report };
 };

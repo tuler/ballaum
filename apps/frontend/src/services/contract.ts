@@ -1,30 +1,16 @@
-import { useSigner } from "wagmi";
-import {
-    ERC20PortalFacet,
-    ERC20PortalFacet__factory,
-    EtherPortalFacet,
-    EtherPortalFacet__factory,
-} from "@cartesi/rollups";
-import { useEffect, useState } from "react";
+import { useNetwork } from "wagmi";
+import { useMemo } from "react";
 
-export const useEtherPortal = (dapp: string) => {
-    const { data: signer } = useSigner();
-    const [contract, setContract] = useState<EtherPortalFacet>();
-    useEffect(() => {
-        if (signer) {
-            setContract(EtherPortalFacet__factory.connect(dapp, signer));
-        }
-    }, [dapp, signer]);
-    return contract;
+const contract: Record<number, string> = {
+    5: "0xE8dc6065B256c14A4274498F75c57ba1b37e9659",
+    31337: "0xF8C694fd58360De278d5fF2276B7130Bfdc0192A",
 };
 
-export const useERC20Portal = (dapp: string) => {
-    const { data: signer } = useSigner();
-    const [contract, setContract] = useState<ERC20PortalFacet>();
-    useEffect(() => {
-        if (signer) {
-            setContract(ERC20PortalFacet__factory.connect(dapp, signer));
-        }
-    }, [dapp, signer]);
-    return contract;
+export const useDAppAddress = (): string | undefined => {
+    const network = useNetwork();
+    const memo = useMemo<string | undefined>(
+        () => (network.chain ? contract[network.chain.id] : undefined),
+        [network.chain]
+    );
+    return memo;
 };

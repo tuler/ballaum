@@ -28,7 +28,7 @@ export const ResultCard: FC<ResultCardProps> = ({ dapp, match }) => {
     const [team1Goals, setTeam1Goals] = useState<string>();
     const [team2Goals, setTeam2Goals] = useState<string>();
 
-    const { address, isConnected } = useAccount();
+    const { isConnected } = useAccount();
 
     const { config, error } = usePrepareContractWrite({
         address: dapp,
@@ -67,7 +67,6 @@ export const ResultCard: FC<ResultCardProps> = ({ dapp, match }) => {
             </CardBody>
             <CardFooter>
                 <VStack>
-                    <Text>{address}</Text>
                     <ButtonGroup spacing="2">
                         {isConnected && (
                             <Button
