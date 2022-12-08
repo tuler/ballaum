@@ -13,7 +13,7 @@ const Wallet: FC<WalletProps> = () => {
     return (
         <HStack>
             <ConnectButton />
-            <DAppWallet dapp={dapp} />
+            {dapp && <DAppWallet dapp={dapp} />}
         </HStack>
     );
 };

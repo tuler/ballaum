@@ -4,6 +4,7 @@ import { FC, ReactNode } from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { SWRConfig, SWRConfiguration } from "swr";
 import { Web3 } from "./web3";
+import theme from "./theme";
 
 const fetcher = async <JSON = any,>(
     input: RequestInfo,
@@ -23,7 +24,7 @@ type Props = {
 
 export const Providers: FC<Props> = ({ children }) => {
     return (
-        <ChakraProvider>
+        <ChakraProvider theme={theme}>
             <Web3>
                 <SWRConfig value={swrConfig}>{children}</SWRConfig>
             </Web3>

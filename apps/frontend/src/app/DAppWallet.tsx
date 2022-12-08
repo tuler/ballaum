@@ -1,21 +1,32 @@
 "use client";
 
 import { FC } from "react";
-import { Button, Text } from "@chakra-ui/react";
-import { Address } from "../components/address";
+import {
+    Button,
+    HStack,
+    Skeleton,
+    Text,
+    useDisclosure,
+} from "@chakra-ui/react";
 import { useInspect } from "../services/inspect";
-import { useAccount } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import { Wallet } from "ballaum-common";
-import { formatEther, formatUnits } from "@ethersproject/units";
+import { formatEther } from "@ethersproject/units";
+import DAppWalletModal from "./DAppWalletModal";
 
 export type DAppWalletProps = {
-    dapp?: string;
+    dapp: `0x${string}`;
 };
 
 const DAppWallet: FC<DAppWalletProps> = ({ dapp }) => {
+    const walletModal = useDisclosure();
     const { address } = useAccount();
-    const balance = useInspect<Wallet>(address ? `/wallets/${address}` : null);
-    const l2Balance = formatEther(balance.report?.ether ?? "0");
+    const { data: balance } = useBalance({ address });
+    const dappWallet = useInspect<Wallet>(
+        address ? `/wallet/${address}` : null
+    );
+    const loadingWallet = !dappWallet.data && !dappWallet.error;
+
     const chevron = (
         <svg
             fill="none"
@@ -34,14 +45,32 @@ const DAppWallet: FC<DAppWalletProps> = ({ dapp }) => {
         </svg>
     );
     return (
-        <Button
-            borderRadius="xl"
-            shadow="md"
-            rightIcon={chevron}
-            _hover={{ transform: "scale(1.02)" }}
-        >
-            <Text fontWeight="bold">DApp: {l2Balance} ETH</Text>
-        </Button>
+        <>
+            <Button
+                borderRadius="xl"
+                shadow="md"
+                variant="outline"
+                rightIcon={chevron}
+                _hover={{ transform: "scale(1.02)" }}
+                onClick={walletModal.onOpen}
+            >
+                <HStack>
+                    <Text fontWeight="bold">DApp:</Text>
+                    {dappWallet.report && (
+                        <Text>{formatEther(dappWallet.report.ether)} ETH</Text>
+                    )}
+                    {loadingWallet && <Skeleton h="20px" w="50px" />}
+                </HStack>
+            </Button>
+            {address && balance && dappWallet.report && (
+                <DAppWalletModal
+                    user={{ address, balance: balance.value }}
+                    dapp={{ address: dapp, balance: dappWallet.report.ether }}
+                    isOpen={walletModal.isOpen}
+                    onClose={walletModal.onClose}
+                />
+            )}
+        </>
     );
 };
 

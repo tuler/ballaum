@@ -8,7 +8,6 @@ import { VStack } from "@chakra-ui/react";
 import { AddMatchCard } from "../components/addMatch";
 import { MatchCard } from "../components/match";
 import { useInspect } from "../services/inspect";
-import { useDAppAddress } from "../services/contract";
 import { MatchCardLoading } from "../components/MatchCardLoading";
 
 const HomePage: FC = () => {
@@ -37,7 +36,6 @@ const HomePage: FC = () => {
     const loading = !error && !data;
     const list = Object.values(tournament?.matches ?? {}).sort(sort);
     const scores = tournament?.scores ?? {};
-    const dapp = useDAppAddress();
 
     return (
         <>
