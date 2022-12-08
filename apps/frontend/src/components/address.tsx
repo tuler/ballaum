@@ -8,7 +8,7 @@ type AddressProps = {
 export const Address: FC<AddressProps> = ({ address }) => {
     return (
         <Text>
-            {address ? `${address.slice(0, 6)}..${address.slice(-4)}` : ""}
+            {address ? `${address.slice(0, 4)}...${address.slice(-4)}` : ""}
         </Text>
     );
 };

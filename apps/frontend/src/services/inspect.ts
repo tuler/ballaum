@@ -39,13 +39,22 @@ type ReportResponse<TReport> = {
 export type UseInspect<TReport> = SWRResponse<InspectResponse> &
     ReportResponse<TReport>;
 
+const useBaseURLKey = (url: string | undefined | null | boolean): Key => {
+    // get connected network (if any)
+    const network = useNetwork();
+    return () =>
+        network.chain && url ? `${baseURL[network.chain.id]}${url}` : false;
+};
+
 export const useInspect = <TReport>(key: Key): UseInspect<TReport> => {
     // get connected network (if any)
     const network = useNetwork();
 
+    // const keyWithBase = useBaseURLKey(key);
+
     // fetch only if connected to valid chain
     const swr = useSWR<InspectResponse>(() =>
-        network.chain ? `${baseURL[network.chain.id]}${key}` : false
+        network.chain && key ? `${baseURL[network.chain.id]}${key}` : false
     );
 
     const response = swr.data;

@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "@cartesi/rollups": "0.8.1",
+        "@chakra-ui/icons": "^2.0.13",
         "@chakra-ui/react": "^2.4.3",
         "@deroll/codec": "*",
         "@emotion/react": "^11.10.5",
@@ -33,6 +34,7 @@
         "next": "13.0.6",
         "react": "18.2.0",
         "react-dom": "18.2.0",
+        "react-icons": "^4.7.1",
         "react-jazzicon": "^1.0.4",
         "swr": "^1.3.0",
         "typescript": "4.9.4",
