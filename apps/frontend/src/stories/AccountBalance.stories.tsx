@@ -31,3 +31,11 @@ Truncated.args = {
     balance: parseEther("100000000.123456789123456789"),
     digits: 4,
 };
+
+export const Commified = Template.bind({});
+Commified.args = {
+    address: "0x620Ae6e1daC65323485a0dfB5765A11Dac54BEfB",
+    balance: parseEther("100000000.123456789123456789"),
+    digits: 4,
+    commify: true,
+};

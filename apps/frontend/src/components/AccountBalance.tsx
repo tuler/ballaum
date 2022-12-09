@@ -1,22 +1,23 @@
 import { FC } from "react";
 import { Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import { BigNumber } from "@ethersproject/bignumber";
-import { formatEther } from "@ethersproject/units";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import { shortAddress } from "./address";
+import { formatEther } from "../services/format";
 
 export type AccountBalanceProps = {
     address: `0x${string}`;
     balance: BigNumber;
     digits?: number;
+    commify?: boolean;
 };
 
 export const AccountBalance: FC<AccountBalanceProps> = ({
     address,
     balance,
     digits = 18,
+    commify = false,
 }) => {
-    const remainder = balance.mod(Math.pow(10, 18 - digits));
     const balanceColor = useColorModeValue("blackAlpha.500", "white");
     return (
         <VStack spacing={0}>
@@ -25,7 +26,7 @@ export const AccountBalance: FC<AccountBalanceProps> = ({
                 {shortAddress(address)}
             </Text>
             <Text fontSize="sm" fontWeight="bold" color={balanceColor}>
-                {formatEther(balance.sub(remainder))} ETH
+                {formatEther(balance, digits, commify)} ETH
             </Text>
         </VStack>
     );
