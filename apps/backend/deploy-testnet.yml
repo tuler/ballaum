@@ -22,7 +22,7 @@ services:
                 "--templateHashFile",
                 "/opt/cartesi/share/dapp-bin/hash",
                 "--outputFile",
-                "/deployments/${NETWORK:?undefined NETWORK}/${DAPP_NAME:?undefined DAPP_NAME}.address",
+                "/deployments/${NETWORK:?undefined NETWORK}/${DAPP_NAME:?undefined DAPP_NAME}.json",
                 "--validators",
                 "0x18930e8a66a1DbE21D00581216789AAB7460Afd0",
             ]
