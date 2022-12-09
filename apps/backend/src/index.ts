@@ -89,21 +89,24 @@ app.inputRouter.add(
         SetPredictionCodec,
         ([tournamentId, id, team1Goals, team2Goals], metadata) => {
             const tournament = tournaments[tournamentId];
+            const user = getAddress(metadata.msg_sender);
             console.log(
-                `prediction from ${metadata.msg_sender} for match ${id}: ${team1Goals} x ${team2Goals}`
+                `prediction from ${user} for match ${id}: ${team1Goals} x ${team2Goals}`
             );
             try {
-                if (tournament.scores[metadata.msg_sender] === undefined) {
+                if (tournament.scores[user] === undefined) {
                     // first time, transfer fee
-                    app.wallet.transferEther(
-                        metadata.msg_sender,
-                        `tournament:${tournamentId}`,
-                        fee
+                    const tournamentWallet = `tournament:${tournamentId}`;
+                    console.log(
+                        `transferring ${formatEther(
+                            fee
+                        )} ETH to wallet ${tournamentWallet}`
                     );
+                    app.wallet.transferEther(user, tournamentWallet, fee);
                 }
 
                 tournament.setPrediction(id as string, {
-                    from: metadata.msg_sender,
+                    from: user,
                     team1Goals,
                     team2Goals,
                     timestamp: metadata.timestamp,
@@ -123,12 +126,13 @@ app.inputRouter.add(
         SetResultCodec,
         ([tournamentId, id, team1Goals, team2Goals], metadata) => {
             const tournament = tournaments[tournamentId];
+            const user = getAddress(metadata.msg_sender);
             console.log(
-                `setResult from ${metadata.msg_sender} for match ${id}: ${team1Goals} x ${team2Goals}`
+                `setResult from ${user} for match ${id}: ${team1Goals} x ${team2Goals}`
             );
             try {
                 // check permission
-                if (tournament.manager !== getAddress(metadata.msg_sender)) {
+                if (tournament.manager !== user) {
                     return "reject";
                 }
 
@@ -150,10 +154,9 @@ app.inputRouter.add(
         AddMatchCodec,
         ([tournamentId, id, team1, team2, start_], metadata) => {
             const start = start_ as BigNumber;
+            const user = getAddress(metadata.msg_sender);
             console.log(
-                `addMatch ${id} to tournament ${tournamentId} from ${
-                    metadata.msg_sender
-                } for match ${id}: ${team1} x ${team2} on ${new Date(
+                `addMatch ${id} to tournament ${tournamentId} from ${user} for match ${id}: ${team1} x ${team2} on ${new Date(
                     start.toNumber()
                 )} (${start.toNumber()})`
             );
@@ -161,7 +164,7 @@ app.inputRouter.add(
                 const tournament = tournaments[tournamentId];
 
                 // check permission
-                if (tournament.manager !== getAddress(metadata.msg_sender)) {
+                if (tournament.manager !== user) {
                     return "reject";
                 }
 
@@ -185,9 +188,10 @@ app.inputRouter.add(
         try {
             console.log(`terminating tournament ${tournamentId}`);
             const tournament = tournaments[tournamentId];
+            const user = getAddress(metadata.msg_sender);
 
             // check permission
-            if (tournament.manager !== getAddress(metadata.msg_sender)) {
+            if (tournament.manager !== user) {
                 return "reject";
             }
 

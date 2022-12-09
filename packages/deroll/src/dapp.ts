@@ -1,3 +1,4 @@
+import { getAddress } from "@ethersproject/address";
 import { hexlify } from "@ethersproject/bytes";
 import { toUtf8Bytes, toUtf8String } from "@ethersproject/strings";
 
@@ -138,7 +139,7 @@ export class DApp implements DAppOutput {
                     metadata.epoch_index == 0 &&
                     metadata.input_index == 0
                 ) {
-                    this.rollupAddress = metadata.msg_sender;
+                    this.rollupAddress = getAddress(metadata.msg_sender);
 
                     // now we know what is the rollups address (which is also the portal address)
                     this.wallet.setPortalAddress(this.rollupAddress);

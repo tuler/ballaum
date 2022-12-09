@@ -75,7 +75,10 @@ export class WalletApp {
                 console.log(
                     `deposit ${formatEther(amount)} ${token} to ${address}`
                 );
-                if (this.verify && metadata.msg_sender !== this.portalAddress) {
+                if (
+                    this.verify &&
+                    getAddress(metadata.msg_sender) !== this.portalAddress
+                ) {
                     // must come from portal
                     return "reject";
                 }
