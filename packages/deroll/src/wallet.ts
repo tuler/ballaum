@@ -1,5 +1,5 @@
 import { defaultAbiCoder } from "@ethersproject/abi";
-import { getAddress } from "@ethersproject/address";
+import { getAddress, isAddress } from "@ethersproject/address";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Zero } from "@ethersproject/constants";
 import { formatEther } from "@ethersproject/units";
@@ -111,7 +111,9 @@ export class WalletApp {
 
     wallet(address: string): Wallet {
         // normalize address
-        address = getAddress(address);
+        if (isAddress(address)) {
+            address = getAddress(address);
+        }
 
         // create if doesn't exist
         this.wallets[address] = this.wallets[address] ?? {
