@@ -11,7 +11,6 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import {
-    useAccount,
     useContractWrite,
     usePrepareContractWrite,
     useWaitForTransaction,
@@ -27,8 +26,6 @@ type ResultCardProps = {
 export const ResultCard: FC<ResultCardProps> = ({ dapp, match }) => {
     const [team1Goals, setTeam1Goals] = useState<string>();
     const [team2Goals, setTeam2Goals] = useState<string>();
-
-    const { isConnected } = useAccount();
 
     const { config, error } = usePrepareContractWrite({
         address: dapp,
@@ -68,14 +65,14 @@ export const ResultCard: FC<ResultCardProps> = ({ dapp, match }) => {
             <CardFooter>
                 <VStack>
                     <ButtonGroup spacing="2">
-                        {isConnected && (
+                        {write && (
                             <Button
                                 colorScheme="purple"
                                 isLoading={isLoading}
                                 loadingText="Saving..."
                                 width={120}
                                 disabled={!team1Goals || !team2Goals}
-                                onClick={() => write?.()}
+                                onClick={() => write()}
                             >
                                 Set Result
                             </Button>

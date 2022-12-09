@@ -19,11 +19,6 @@ type MatchCardProps = {
     match: Match;
 };
 
-const dateFormat = new Intl.DateTimeFormat("default", {
-    dateStyle: "medium",
-    timeStyle: "short",
-});
-
 export const MatchCard: FC<MatchCardProps> = ({ match }) => {
     const countryName = (code: string): string =>
         code.length > 3 ? code.substring(3) : code;

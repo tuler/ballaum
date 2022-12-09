@@ -1,5 +1,7 @@
 import { FC, useState } from "react";
 import {
+    Alert,
+    AlertIcon,
     Button,
     ButtonGroup,
     Card,
@@ -12,31 +14,37 @@ import {
 } from "@chakra-ui/react";
 import { InputFacet__factory } from "@cartesi/rollups";
 import {
-    useAccount,
     useContractWrite,
-    useNetwork,
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
 import { Match, SetPredictionCodec } from "ballaum-common";
 import { BigNumber } from "ethers";
+import { formatEther, parseEther } from "@ethersproject/units";
 
 type PredictionCardProps = {
+    enrolled: boolean;
+    hasBalance: boolean;
     dapp: string;
     match: Match;
+    chainId?: number;
 };
 
-export const PredictionCard: FC<PredictionCardProps> = ({ dapp, match }) => {
-    const network = useNetwork();
+export const PredictionCard: FC<PredictionCardProps> = ({
+    dapp,
+    match,
+    enrolled,
+    hasBalance,
+    chainId,
+}) => {
     const [team1Goals, setTeam1Goals] = useState<string>();
     const [team2Goals, setTeam2Goals] = useState<string>();
-    const { isConnected } = useAccount();
 
     const { config, error } = usePrepareContractWrite({
         address: dapp,
         abi: InputFacet__factory.abi,
         functionName: "addInput",
-        chainId: network.chain?.id,
+        chainId,
         args: [
             SetPredictionCodec.encode([
                 "wc2022",
@@ -49,8 +57,11 @@ export const PredictionCard: FC<PredictionCardProps> = ({ dapp, match }) => {
     const { data: tx, write } = useContractWrite(config);
     const { data: receipt, isError, isLoading } = useWaitForTransaction(tx);
 
+    const fee = parseEther("0.01");
+    const feeFormatted: string = formatEther(fee);
+
     // need signup if balance is lower than signup fee
-    const canPredict = match && match.start > Date.now();
+    const canPredict = match.start > Date.now();
     const filled = team1Goals && team2Goals && canPredict;
 
     return (
@@ -70,19 +81,31 @@ export const PredictionCard: FC<PredictionCardProps> = ({ dapp, match }) => {
                             onChange={(e) => setTeam2Goals(e.target.value)}
                         />
                     </HStack>
+                    {!enrolled && !hasBalance && (
+                        <Alert status="warning">
+                            <AlertIcon />
+                            {`To participate you must first deposit at least ${feeFormatted} ETH`}
+                        </Alert>
+                    )}
+                    {!enrolled && hasBalance && (
+                        <Alert status="info">
+                            <AlertIcon />
+                            {`A fee of ${feeFormatted} ETH will be transferred from your DApp wallet`}
+                        </Alert>
+                    )}
                 </VStack>
             </CardBody>
             <CardFooter>
                 <VStack>
                     <ButtonGroup spacing="2">
-                        {isConnected && (
+                        {write && (
                             <Button
                                 colorScheme="purple"
                                 isLoading={isLoading}
                                 loadingText="Saving..."
                                 width={120}
-                                disabled={!filled}
-                                onClick={() => write?.()}
+                                disabled={!filled || (!enrolled && !hasBalance)}
+                                onClick={() => write()}
                             >
                                 Set Prediction
                             </Button>
