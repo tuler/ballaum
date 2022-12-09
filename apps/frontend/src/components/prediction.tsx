@@ -14,10 +14,12 @@ import { InputFacet__factory } from "@cartesi/rollups";
 import {
     useAccount,
     useContractWrite,
+    useNetwork,
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
 import { Match, SetPredictionCodec } from "ballaum-common";
+import { BigNumber } from "ethers";
 
 type PredictionCardProps = {
     dapp: string;
@@ -25,6 +27,7 @@ type PredictionCardProps = {
 };
 
 export const PredictionCard: FC<PredictionCardProps> = ({ dapp, match }) => {
+    const network = useNetwork();
     const [team1Goals, setTeam1Goals] = useState<string>();
     const [team2Goals, setTeam2Goals] = useState<string>();
     const { isConnected } = useAccount();
@@ -33,12 +36,13 @@ export const PredictionCard: FC<PredictionCardProps> = ({ dapp, match }) => {
         address: dapp,
         abi: InputFacet__factory.abi,
         functionName: "addInput",
+        chainId: network.chain?.id,
         args: [
             SetPredictionCodec.encode([
                 "wc2022",
                 match.id,
-                parseInt(team1Goals ?? "0"),
-                parseInt(team2Goals ?? "0"),
+                BigNumber.from(team1Goals || "0"),
+                BigNumber.from(team2Goals || "0"),
             ]),
         ],
     });
