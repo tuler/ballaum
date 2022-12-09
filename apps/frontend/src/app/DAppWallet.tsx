@@ -11,7 +11,7 @@ import {
 import { useInspect } from "../services/inspect";
 import { useAccount, useBalance } from "wagmi";
 import { Wallet } from "ballaum-common";
-import { formatEther } from "@ethersproject/units";
+import { formatEther, parseEther } from "@ethersproject/units";
 import DAppWalletModal from "./DAppWalletModal";
 
 export type DAppWalletProps = {
@@ -65,7 +65,10 @@ const DAppWallet: FC<DAppWalletProps> = ({ dapp }) => {
             {address && balance && dappWallet.report && (
                 <DAppWalletModal
                     user={{ address, balance: balance.value }}
-                    dapp={{ address: dapp, balance: dappWallet.report.ether }}
+                    dapp={{
+                        address: dapp,
+                        balance: parseEther(dappWallet.report.ether),
+                    }}
                     isOpen={walletModal.isOpen}
                     onClose={walletModal.onClose}
                 />

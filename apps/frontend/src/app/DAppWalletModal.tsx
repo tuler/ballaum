@@ -6,7 +6,6 @@ import {
     ModalBody,
     ModalCloseButton,
     ModalContent,
-    ModalHeader,
     ModalOverlay,
 } from "@chakra-ui/react";
 import {
@@ -22,7 +21,7 @@ import { EtherWithdrawCodec } from "@deroll/codec";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Zero } from "@ethersproject/constants";
 
-import { WalletTabs } from "../components/WalletModal";
+import { Transfer } from "../components/WalletModal";
 import { AccountBalanceProps } from "../components/AccountBalance";
 
 type DAppWalletModalProps = {
@@ -69,20 +68,25 @@ const DAppWalletModal: FC<DAppWalletModalProps> = ({
             isCentered
         >
             <ModalOverlay />
-            <ModalContent>
-                <ModalHeader>DApp Wallet</ModalHeader>
+            <ModalContent bg="gray.50">
                 <ModalCloseButton />
-                <ModalBody>
-                    <WalletTabs
+                <ModalBody m={5}>
+                    <Transfer
                         user={user}
                         dapp={dapp}
-                        onDeposit={(v) => {
+                        isLoading={
+                            depositWait.isLoading || withdrawWait.isLoading
+                        }
+                        onSubmit={(operation, v) => {
                             setAmount(v);
-                            deposit.write?.();
+                            if (operation == "deposit") {
+                                deposit.write?.();
+                            } else if (operation == "withdraw") {
+                                withdraw.write?.();
+                            }
                         }}
-                        onWithdraw={(v) => {
+                        onChange={(_operation, v) => {
                             setAmount(v);
-                            withdraw.write?.();
                         }}
                     />
                 </ModalBody>
