@@ -29,13 +29,16 @@ const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
     );
 };
 
-const { chains, provider } = configureChains(
-    [goerli, hardhat],
-    [
-        infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_ID! }),
-        publicProvider(),
-    ]
-);
+// add hardhat only in development
+let supportedChains = [goerli];
+if (process.env.NODE_ENV == "development") {
+    supportedChains = [hardhat, ...supportedChains];
+}
+
+const { chains, provider } = configureChains(supportedChains, [
+    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_ID! }),
+    publicProvider(),
+]);
 
 const { connectors } = getDefaultWallets({
     appName: "Bolão da Copa",
