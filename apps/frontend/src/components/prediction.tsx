@@ -61,13 +61,31 @@ export const PredictionCard: FC<PredictionCardProps> = ({
     const feeFormatted: string = formatEther(fee);
 
     // need signup if balance is lower than signup fee
-    const canPredict = match.start > Date.now();
-    const filled = team1Goals && team2Goals && canPredict;
+    const overdue = match.start <= Date.now();
+    const filled = team1Goals && team2Goals;
 
     return (
         <Card key={match.id} align="center">
             <CardBody>
                 <VStack>
+                    {overdue && !match.result && (
+                        <Alert status="error">
+                            <AlertIcon />
+                            {`Match is ongoing, predictions closed`}
+                        </Alert>
+                    )}
+                    {!enrolled && !hasBalance && (
+                        <Alert status="warning">
+                            <AlertIcon />
+                            {`To participate you must first deposit at least ${feeFormatted} ETH`}
+                        </Alert>
+                    )}
+                    {!enrolled && hasBalance && (
+                        <Alert status="info">
+                            <AlertIcon />
+                            {`A fee of ${feeFormatted} ETH will be transferred from your DApp wallet`}
+                        </Alert>
+                    )}
                     <HStack spacing={5}>
                         <Input
                             width={55}
@@ -81,18 +99,6 @@ export const PredictionCard: FC<PredictionCardProps> = ({
                             onChange={(e) => setTeam2Goals(e.target.value)}
                         />
                     </HStack>
-                    {!enrolled && !hasBalance && (
-                        <Alert status="warning">
-                            <AlertIcon />
-                            {`To participate you must first deposit at least ${feeFormatted} ETH`}
-                        </Alert>
-                    )}
-                    {!enrolled && hasBalance && (
-                        <Alert status="info">
-                            <AlertIcon />
-                            {`A fee of ${feeFormatted} ETH will be transferred from your DApp wallet`}
-                        </Alert>
-                    )}
                 </VStack>
             </CardBody>
             <CardFooter>
@@ -104,7 +110,11 @@ export const PredictionCard: FC<PredictionCardProps> = ({
                                 isLoading={isLoading}
                                 loadingText="Saving..."
                                 width={120}
-                                disabled={!filled || (!enrolled && !hasBalance)}
+                                disabled={
+                                    !filled ||
+                                    (!enrolled && !hasBalance) ||
+                                    overdue
+                                }
                                 onClick={() => write()}
                             >
                                 Set Prediction

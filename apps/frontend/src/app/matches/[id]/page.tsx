@@ -62,7 +62,7 @@ const MatchPage: FC<PageProps> = ({ params: { id } }) => {
         match &&
         !match.result &&
         tournament.manager == getAddress(address as string);
-    const canPredict = dapp && match && match.start > Date.now();
+    const canPredict = dapp && match;
 
     return (
         <VStack spacing={10}>
