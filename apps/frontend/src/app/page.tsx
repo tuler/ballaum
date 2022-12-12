@@ -3,14 +3,23 @@
 import { FC } from "react";
 import { Match, Tournament } from "ballaum-common";
 import NextLink from "next/link";
-import { LeaderboardTable } from "../components/leaderboard";
+import { useNetwork } from "wagmi";
 import { VStack } from "@chakra-ui/react";
+
+import { LeaderboardTable } from "../components/leaderboard";
 import { AddMatchCard } from "../components/addMatch";
 import { MatchCard } from "../components/match";
 import { useInspect } from "../services/inspect";
 import { MatchCardLoading } from "../components/MatchCardLoading";
+import { useDAppAddress } from "../services/contract";
 
 const HomePage: FC = () => {
+    // get dapp address
+    const dapp = useDAppAddress();
+
+    // get connected network
+    const network = useNetwork();
+
     const sort = (match1: Match, match2: Match) => {
         if (match1.result && !match2.result) {
             // match with result goes in the end
@@ -58,6 +67,9 @@ const HomePage: FC = () => {
                         <MatchCard match={match} />
                     </NextLink>
                 ))}
+                {dapp && network.chain && (
+                    <AddMatchCard dapp={dapp} chainId={network.chain.id} />
+                )}
             </VStack>
         </>
     );

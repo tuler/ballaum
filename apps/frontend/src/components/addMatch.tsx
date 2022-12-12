@@ -20,27 +20,21 @@ import {
 
 interface AddMatchCardProps {
     dapp: string;
+    chainId?: number;
 }
 
-export const AddMatchCard: FC<AddMatchCardProps> = ({ dapp }) => {
-    const [id, setId] = useState<string>();
-    const [team1, setTeam1] = useState<string>();
-    const [team2, setTeam2] = useState<string>();
-    const [start, setStart] = useState<number>();
+export const AddMatchCard: FC<AddMatchCardProps> = ({ chainId, dapp }) => {
+    const [id, setId] = useState<string>("");
+    const [team1, setTeam1] = useState<string>("");
+    const [team2, setTeam2] = useState<string>("");
+    const [start, setStart] = useState<number>(0);
 
     const { config, error } = usePrepareContractWrite({
         address: dapp,
         abi: InputFacet__factory.abi,
         functionName: "addInput",
-        args: [
-            AddMatchCodec.encode([
-                "wc2022",
-                id ?? "0",
-                team1 ?? "",
-                team2 ?? "",
-                start ?? 0,
-            ]),
-        ],
+        chainId,
+        args: [AddMatchCodec.encode(["wc2022", id, team1, team2, start])],
     });
     const { data: tx, write } = useContractWrite(config);
     const { data: receipt, isError, isLoading } = useWaitForTransaction(tx);
@@ -70,17 +64,17 @@ export const AddMatchCard: FC<AddMatchCardProps> = ({ dapp }) => {
             </CardBody>
             <CardFooter>
                 <ButtonGroup>
-                    {
+                    {write && (
                         <Button
                             colorScheme="purple"
                             isLoading={isLoading}
                             loadingText="Saving..."
                             disabled={!id || !team1 || !team2 || !start}
-                            onClick={() => write?.()}
+                            onClick={() => write()}
                         >
                             Add
                         </Button>
-                    }
+                    )}
                 </ButtonGroup>
             </CardFooter>
         </Card>
