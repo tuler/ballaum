@@ -168,7 +168,7 @@ app.inputRouter.add(
                     return "reject";
                 }
 
-                tournament.addMatch("AddMatch", {
+                tournament.addMatch(id, {
                     id,
                     team1,
                     team2,
