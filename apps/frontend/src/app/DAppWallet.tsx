@@ -12,7 +12,6 @@ import {
 import { useAccount, useBalance } from "wagmi";
 import { Wallet } from "ballaum-common";
 import { BigNumber } from "@ethersproject/bignumber";
-import { parseEther } from "@ethersproject/units";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 
 import { formatEther } from "../services/format";
@@ -87,7 +86,7 @@ const DAppWallet: FC<DAppWalletProps> = ({ dapp }) => {
             {dappWallet.report && (
                 <DAppWalletComponent
                     dapp={dapp}
-                    balance={parseEther(dappWallet.report?.ether)}
+                    balance={BigNumber.from(dappWallet.report.ether)}
                     onClick={walletModal.onOpen}
                 />
             )}
@@ -96,7 +95,7 @@ const DAppWallet: FC<DAppWalletProps> = ({ dapp }) => {
                     user={{ address, balance: balance.value }}
                     dapp={{
                         address: dapp,
-                        balance: parseEther(dappWallet.report.ether),
+                        balance: BigNumber.from(dappWallet.report.ether),
                     }}
                     isOpen={walletModal.isOpen}
                     onClose={walletModal.onClose}
