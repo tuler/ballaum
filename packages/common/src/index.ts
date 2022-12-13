@@ -4,22 +4,23 @@ export * from "./types";
 
 // application codecs
 export const AddMatchCodec = new ABIInputCodec("AddMatch", [
-    "string",
-    "string",
-    "string",
-    "string",
-    "uint",
+    "string", // tournamentId
+    "string", // matchId
+    "string", // team1
+    "string", // team2
+    "uint", // timestamp of the match
 ]);
+
 export const SetPredictionCodec = new ABIInputCodec("SetPrediction", [
-    "string",
-    "string",
-    "uint8",
-    "uint8",
+    "string", // tournamentId
+    "string", // matchId
+    "uint8", // team1Score
+    "uint8", // team2Score
 ]);
 export const SetResultCodec = new ABIInputCodec("SetResult", [
-    "string",
-    "string",
-    "uint8",
-    "uint8",
+    "string", // tournamentId
+    "string", // matchId
+    "uint8", // team1Score
+    "uint8", // team2Score
 ]);
-export const TerminateCodec = new ABIInputCodec("Terminate", ["string"]);
+export const TerminateCodec = new ABIInputCodec("Terminate", ["string"]); // tournamentId
