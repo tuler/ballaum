@@ -19,3 +19,15 @@ Tie, but not correct score: 15 points
 None of the above: 0 points
 
 At the end of the tournament, the manager finalizes it. Whoever has the most points takes the tournament pot. If there is more than one winner the pot is divided between them. The pot is transferred to the winner's DApp Wallet, he can then withdrawn the funds back to L1.
+
+## Ideas
+
+These are some improvement ideas
+
+-   Improve type system of codecs
+-   AddTournament input
+-   DeleteMatch input (for mistakes)
+-   Set several predictions or results with just one input (to save money, but it's tricky to keep atomicity)
+-   Handle voucher execution of withdraws
+-   Use GraphQL for better feedback
+-   Transaction simulation (for input validation)
