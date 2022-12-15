@@ -19,9 +19,9 @@ type UserScore = {
 };
 
 export const LeaderboardTable: FC<LeaderboardTableProps> = ({ scores }) => {
-    const leaderboard = Object.entries(scores).map<UserScore>(
-        ([user, score]) => ({ user, score })
-    );
+    const leaderboard = Object.entries(scores)
+        .map<UserScore>(([user, score]) => ({ user, score }))
+        .sort((a, b) => b.score - a.score);
     return (
         <TableContainer width="full">
             <Table>
