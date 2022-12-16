@@ -8,12 +8,12 @@ import { getAddress } from "@ethersproject/address";
 import { BigNumber } from "@ethersproject/bignumber";
 import { parseEther } from "@ethersproject/units";
 
-import { useInspect } from "../../../services/inspect";
+import { useInspect } from "../../../hooks/inspect";
 import { MatchCard } from "../../../components/match";
 import { ResultCard } from "../../../components/result";
 import { PredictionCard } from "../../../components/prediction";
 import { MatchLeaderboardTable } from "../../../components/matchLeaderboard";
-import { useDAppAddress } from "../../../services/contract";
+import { useDAppAddress } from "../../../hooks/contract";
 import { MatchCardLoading } from "../../../components/MatchCardLoading";
 
 type PageParams = {

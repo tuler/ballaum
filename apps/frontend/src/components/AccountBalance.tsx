@@ -3,7 +3,7 @@ import { Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import { BigNumber } from "@ethersproject/bignumber";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import { shortAddress } from "./address";
-import { formatEther } from "../services/format";
+import { formatEther } from "../utils/format";
 
 export type AccountBalanceProps = {
     address: `0x${string}`;

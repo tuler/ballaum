@@ -14,8 +14,8 @@ import { Wallet } from "ballaum-common";
 import { BigNumber } from "@ethersproject/bignumber";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 
-import { formatEther } from "../services/format";
-import { useInspect } from "../services/inspect";
+import { formatEther } from "../utils/format";
+import { useInspect } from "../hooks/inspect";
 import DAppWalletModal from "./DAppWalletModal";
 import { shortAddress } from "../components/address";
 

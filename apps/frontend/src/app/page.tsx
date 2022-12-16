@@ -9,9 +9,9 @@ import { VStack } from "@chakra-ui/react";
 import { LeaderboardTable } from "../components/leaderboard";
 import { AddMatchCard } from "../components/addMatch";
 import { MatchCard } from "../components/match";
-import { useInspect } from "../services/inspect";
+import { useInspect } from "../hooks/inspect";
 import { MatchCardLoading } from "../components/MatchCardLoading";
-import { useDAppAddress } from "../services/contract";
+import { useDAppAddress } from "../hooks/contract";
 
 const HomePage: FC = () => {
     // get dapp address

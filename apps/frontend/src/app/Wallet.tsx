@@ -4,7 +4,7 @@ import { FC } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { HStack } from "@chakra-ui/react";
 import DAppWallet from "./DAppWallet";
-import { useDAppAddress } from "../services/contract";
+import { useDAppAddress } from "../hooks/contract";
 
 export type WalletProps = {};
 
