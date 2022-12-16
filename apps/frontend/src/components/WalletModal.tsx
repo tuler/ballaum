@@ -112,7 +112,7 @@ export const Transfer: FC<TransferProps> = ({
 }) => {
     const [operation, setOperation] = useState<"deposit" | "withdraw">();
     const [error, setError] = useState<string>();
-    const [amountStr, setAmountStr] = useState<string>();
+    const [amountStr, setAmountStr] = useState<string>("");
     const [amount, setAmount] = useState<BigNumber>(Zero);
 
     const set = (op: Operation | undefined, str: string | undefined) => {
@@ -138,7 +138,7 @@ export const Transfer: FC<TransferProps> = ({
         } catch (e) {
             error = "Invalid amount";
         }
-        setAmountStr(str);
+        setAmountStr(str || "");
         setOperation(op);
         setError(error);
         setAmount(value);
