@@ -3,7 +3,6 @@
 import { FC, ReactNode } from "react";
 import { Client, createClient, Provider } from "urql";
 import { mapValues } from "lodash";
-import { retryExchange } from "@urql/exchange-retry";
 import { useNetwork } from "wagmi";
 
 const urls: Record<number, string> = {
@@ -14,11 +13,6 @@ const urls: Record<number, string> = {
 const clients: Record<number, Client> = mapValues(urls, (url) =>
     createClient({
         url,
-        exchanges: [
-            retryExchange({
-                retryIf: (err) => !!err,
-            }),
-        ],
     })
 );
 
