@@ -44,14 +44,13 @@ const HomePage: FC = () => {
     } = useInspect<Tournament>(`/tournaments/wc2022`);
     const loading = !error && !data;
     const list = Object.values(tournament?.matches ?? {}).sort(sort);
-    const scores = tournament?.scores ?? {};
 
     return (
         <>
-            {Object.keys(scores).length > 0 && (
-                <LeaderboardTable scores={scores} />
-            )}
             <VStack spacing={4}>
+                {dapp && (
+                    <LeaderboardTable dapp={dapp} tournament={tournament} />
+                )}
                 {loading && (
                     <>
                         <MatchCardLoading />
