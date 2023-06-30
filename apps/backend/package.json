@@ -6,11 +6,10 @@
     "author": "Danilo Tuler",
     "license": "MIT",
     "scripts": {
-        "build": "ts-node esbuild.ts",
+        "build": "ts-node esbuild.ts --bundle --outfile=dist/index.js --platform=node --target=node19",
         "clean": "rimraf dist",
-        "dev": "run-s build start:host",
-        "start:docker": "docker run -e ROLLUP_HTTP_SERVER_URL=\"http://127.0.0.1:5004\" -e CHAIN_ID=31337 --init --network host -v `pwd`:/dapp -w /dapp cartesi/txiki:latest tjs dist/index.js",
-        "start:host": "ROLLUP_HTTP_SERVER_URL=\"http://127.0.0.1:5004\" CHAIN_ID=31337 tjs dist/index.js",
+        "dev": "run-s build start",
+        "start": "ROLLUP_HTTP_SERVER_URL=\"http://127.0.0.1:5004\" NETWORK=localhost ts-node src/index.ts",
         "test": "jest --coverage",
         "tsc": "tsc -noEmit"
     },
@@ -28,7 +27,7 @@
         "typescript": "^4.9.4"
     },
     "dependencies": {
-        "@cartesi/rollups": "^0.8.1",
+        "@cartesi/rollups": "^0.9.1",
         "@deroll/app": "*",
         "@deroll/codec": "*",
         "@ethersproject/abi": "^5.7.0",
