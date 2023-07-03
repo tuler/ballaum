@@ -5,6 +5,7 @@ import { parseEther } from "@ethersproject/units";
 import { DAppOutput } from "../src/dapp";
 import { WalletApp } from "../src/wallet";
 import { RequestMetadata } from "../src/types";
+import { ERC20DepositCodec, EtherDepositCodec } from "@deroll/codec";
 
 describe("Wallet", () => {
     let dapp: DAppOutput;
@@ -20,7 +21,7 @@ describe("Wallet", () => {
             createReport: jest.fn(),
             createVoucher: jest.fn(),
         };
-        wallet = new WalletApp(true);
+        wallet = new WalletApp();
     });
 
     test("init", () => {
@@ -117,20 +118,20 @@ describe("Wallet", () => {
         );
     });
 
-    test("withdraw ETH with undefined portal address", () => {
+    test("withdraw ETH with undefined dapp address", () => {
         const amount = parseEther("1");
         wallet.depositEther(account1, amount);
         expect(() =>
             wallet.withdrawEther(account1, amount.div(4))
-        ).toThrowError("undefined portal address");
+        ).toThrowError("undefined rollup dapp address");
     });
 
     test("withdraw ETH", () => {
-        wallet.setPortalAddress(dappAddress);
+        wallet.setDAppAddress(dappAddress);
         const amount = parseEther("1");
         wallet.depositEther(account1, amount);
         const voucher =
-            "0x74956b9400000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003782dace9d90000";
+            "0x522f6815000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003782dace9d90000";
 
         // withdraw 1/4
         expect(wallet.withdrawEther(account1, amount.div(4))).toEqual({
@@ -143,7 +144,6 @@ describe("Wallet", () => {
     });
 
     test("withdraw ERC20", () => {
-        wallet.setPortalAddress(dappAddress);
         const amount = parseEther("1");
         wallet.depositERC20(token, account1, amount);
         const voucher =
@@ -173,7 +173,6 @@ describe("Wallet", () => {
     });
 
     test("depositEtherRoute reject", () => {
-        wallet.setPortalAddress(dappAddress);
         const amount = parseEther("1");
         const metadata: RequestMetadata = {
             block_number: 0,
@@ -194,13 +193,12 @@ describe("Wallet", () => {
     });
 
     test("depositEtherRoute", () => {
-        wallet.setPortalAddress(dappAddress);
         const amount = parseEther("1");
         const metadata: RequestMetadata = {
             block_number: 0,
             epoch_index: 0,
             input_index: 0,
-            msg_sender: dappAddress,
+            msg_sender: EtherDepositCodec.address,
             timestamp: 0,
         };
         expect(
@@ -215,7 +213,6 @@ describe("Wallet", () => {
     });
 
     test("depositERC20Route reject", () => {
-        wallet.setPortalAddress(dappAddress);
         const amount = parseEther("1");
         const metadata: RequestMetadata = {
             block_number: 0,
@@ -236,13 +233,12 @@ describe("Wallet", () => {
     });
 
     test("depositERC20Route", () => {
-        wallet.setPortalAddress(dappAddress);
         const amount = parseEther("1");
         const metadata: RequestMetadata = {
             block_number: 0,
             epoch_index: 0,
             input_index: 0,
-            msg_sender: dappAddress,
+            msg_sender: ERC20DepositCodec.address,
             timestamp: 0,
         };
         expect(
@@ -257,7 +253,7 @@ describe("Wallet", () => {
     });
 
     test("withdrawEtherRoute reject no balance", async () => {
-        wallet.setPortalAddress(dappAddress);
+        wallet.setDAppAddress(dappAddress);
         const amount = parseEther("1");
         const metadata: RequestMetadata = {
             block_number: 0,
@@ -270,7 +266,7 @@ describe("Wallet", () => {
             await wallet.withdrawEtherRoute.handler(
                 [amount],
                 metadata,
-                wallet.depositEtherRoute,
+                wallet.withdrawEtherRoute,
                 dapp
             )
         ).toEqual("reject");
@@ -278,7 +274,7 @@ describe("Wallet", () => {
     });
 
     test("withdrawEtherRoute", async () => {
-        wallet.setPortalAddress(dappAddress);
+        wallet.setDAppAddress(dappAddress);
         const amount = parseEther("1");
         wallet.depositEther(account1, amount);
         const metadata: RequestMetadata = {
@@ -292,7 +288,7 @@ describe("Wallet", () => {
             await wallet.withdrawEtherRoute.handler(
                 [amount],
                 metadata,
-                wallet.depositEtherRoute,
+                wallet.withdrawEtherRoute,
                 dapp
             )
         ).toEqual("accept");
@@ -300,7 +296,7 @@ describe("Wallet", () => {
     });
 
     test("withdrawERC20Route reject no balance", async () => {
-        wallet.setPortalAddress(dappAddress);
+        wallet.setDAppAddress(dappAddress);
         const amount = parseEther("1");
         const metadata: RequestMetadata = {
             block_number: 0,
@@ -313,7 +309,7 @@ describe("Wallet", () => {
             await wallet.withdrawERC20Route.handler(
                 [token, amount],
                 metadata,
-                wallet.depositERC20Route,
+                wallet.withdrawERC20Route,
                 dapp
             )
         ).toEqual("reject");
@@ -321,7 +317,6 @@ describe("Wallet", () => {
     });
 
     test("withdrawERC20Route", async () => {
-        wallet.setPortalAddress(dappAddress);
         const amount = parseEther("1");
         wallet.depositERC20(token, account1, amount);
         const metadata: RequestMetadata = {
@@ -335,10 +330,10 @@ describe("Wallet", () => {
             await wallet.withdrawERC20Route.handler(
                 [token, amount],
                 metadata,
-                wallet.depositERC20Route,
+                wallet.withdrawERC20Route,
                 dapp
             )
         ).toEqual("accept");
-        expect(wallet.wallet(account1).ether).toEqual(Zero);
+        expect(wallet.wallet(account1).erc20[token]).toEqual(Zero);
     });
 });

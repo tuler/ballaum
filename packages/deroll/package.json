@@ -1,6 +1,6 @@
 {
     "name": "@deroll/app",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Cartesi Rollups Typescript Framework",
     "repository": "http://github.com/tuler/deroll",
     "author": "Danilo Tuler",
@@ -16,7 +16,7 @@
         "test": "jest --coverage"
     },
     "dependencies": {
-        "@cartesi/rollups": "^0.8",
+        "@cartesi/rollups": "^0.9.1",
         "@deroll/codec": "*",
         "@ethersproject/abi": "^5.7",
         "@ethersproject/address": "^5.7",

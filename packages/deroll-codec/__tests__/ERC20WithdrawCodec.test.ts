@@ -6,21 +6,21 @@ import { ERC20WithdrawCodec } from "../src";
 
 describe("ERC20WithdrawCodec", () => {
     test("correct", () => {
-        const values: any[] = [AddressZero, BigNumber.from(1)];
+        const values: any[] = [AddressZero, BigNumber.from(1), "0x"];
         expect(
             ERC20WithdrawCodec.decode(ERC20WithdrawCodec.encode(values))
         ).toEqual(values);
     });
 
     test("incorrect-", () => {
-        const values: any[] = [AddressZero];
+        const values: any[] = [AddressZero, BigNumber.from(1)];
         expect(() =>
             ERC20WithdrawCodec.decode(ERC20WithdrawCodec.encode(values))
         ).toThrow();
     });
 
     test("incorrect+", () => {
-        const values: any[] = [AddressZero, BigNumber.from(1), 2];
+        const values: any[] = [AddressZero, BigNumber.from(1), "0x", 2];
         expect(() =>
             ERC20WithdrawCodec.decode(ERC20WithdrawCodec.encode(values))
         ).toThrow();

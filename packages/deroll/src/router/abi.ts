@@ -1,5 +1,5 @@
 import { Result } from "@ethersproject/abi";
-import { ABIInputCodec } from "@deroll/codec";
+import { ABIHeaderInputCodec, ABIInputCodec } from "@deroll/codec";
 
 import { DAppOutput } from "../dapp";
 import { RequestData, RequestHandlerResult, RequestMetadata } from "../types";
@@ -12,16 +12,27 @@ export type Handler = (
 ) => RequestHandlerResult | Promise<RequestHandlerResult>;
 
 export class Route {
-    public readonly codec: ABIInputCodec;
+    public readonly codec: ABIInputCodec | ABIHeaderInputCodec;
     public readonly handler: Handler;
 
-    constructor(codec: ABIInputCodec, handler: Handler) {
+    constructor(codec: ABIInputCodec | ABIHeaderInputCodec, handler: Handler) {
         this.codec = codec;
         this.handler = handler;
     }
 
-    public match(payload: string): boolean {
-        return payload.startsWith(this.codec.header);
+    public match(request: RequestData): boolean {
+        if (
+            this.codec.address !== undefined &&
+            this.codec.address !== request.metadata.msg_sender
+        ) {
+            // no match if codec specifies an address that is not the request's sender
+            return false;
+        }
+        if (this.codec instanceof ABIHeaderInputCodec) {
+            // if codec specifies header, payload must have it
+            return request.payload.startsWith(this.codec.header);
+        }
+        return true;
     }
 }
 
@@ -42,15 +53,14 @@ export class ABIRouter {
         request: RequestData,
         dapp: DAppOutput
     ): RequestHandlerResult | Promise<RequestHandlerResult> {
-        const payload = request.payload;
         for (const route of this.routes) {
-            if (route.match(payload)) {
+            if (route.match(request)) {
                 // 🤜🤛 match
-                const result = route.codec.decode(payload);
+                const result = route.codec.decode(request.payload);
                 return route.handler(result, request.metadata, route, dapp);
             }
         }
-        // XXX: do we accept or reject an unknown input?
-        return "accept";
+        // reject if input in unknown/invalid (no matching route)
+        return "reject";
     }
 }

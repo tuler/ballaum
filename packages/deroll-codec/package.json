@@ -1,6 +1,6 @@
 {
     "name": "@deroll/codec",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Cartesi Rollups Typescript Framework",
     "repository": "http://github.com/tuler/deroll",
     "author": "Danilo Tuler",

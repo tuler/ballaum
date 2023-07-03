@@ -3,11 +3,11 @@ import { getAddress, isAddress } from "@ethersproject/address";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Zero } from "@ethersproject/constants";
 import { formatEther } from "@ethersproject/units";
-import { EtherPortalFacet__factory, IERC20__factory } from "@cartesi/rollups";
+import { CartesiDApp__factory, IERC20__factory } from "@cartesi/rollups";
 import {
-    EtherTransferCodec,
+    EtherDepositCodec,
     EtherWithdrawCodec,
-    ERC20TransferCodec,
+    ERC20DepositCodec,
     ERC20WithdrawCodec,
 } from "@deroll/codec";
 
@@ -20,23 +20,21 @@ export type Wallet = {
 };
 
 export class WalletApp {
-    private verify: boolean;
-    private portalAddress: string | null;
+    private dappAddress: string | null;
     private wallets: Record<string, Wallet>;
     public readonly depositEtherRoute: Route;
     public readonly depositERC20Route: Route;
     public readonly withdrawEtherRoute: Route;
     public readonly withdrawERC20Route: Route;
 
-    constructor(verify: boolean) {
-        this.portalAddress = null;
+    constructor() {
+        this.dappAddress = null;
         this.wallets = {};
-        this.verify = verify;
         this.depositEtherRoute = new Route(
-            EtherTransferCodec,
+            EtherDepositCodec,
             ([address, amount], { msg_sender }) => {
                 console.log(`deposit ${formatEther(amount)} eth to ${address}`);
-                if (this.verify && msg_sender !== this.portalAddress) {
+                if (msg_sender !== EtherDepositCodec.address) {
                     // must come from portal
                     return "reject";
                 }
@@ -70,15 +68,12 @@ export class WalletApp {
         );
 
         this.depositERC20Route = new Route(
-            ERC20TransferCodec,
-            ([address, token, amount], metadata) => {
+            ERC20DepositCodec,
+            ([address, token, amount], { msg_sender }) => {
                 console.log(
                     `deposit ${formatEther(amount)} ${token} to ${address}`
                 );
-                if (
-                    this.verify &&
-                    getAddress(metadata.msg_sender) !== this.portalAddress
-                ) {
+                if (msg_sender !== ERC20DepositCodec.address) {
                     // must come from portal
                     return "reject";
                 }
@@ -126,8 +121,8 @@ export class WalletApp {
         return this.wallets[address];
     }
 
-    setPortalAddress(portalAddress: string) {
-        this.portalAddress = portalAddress;
+    setDAppAddress(dappAddress: string) {
+        this.dappAddress = dappAddress;
     }
 
     depositEther(to: string, amount: BigNumber): void {
@@ -180,26 +175,20 @@ export class WalletApp {
             );
         }
 
-        if (!this.portalAddress) {
-            throw new Error(`undefined portal address`);
+        if (!this.dappAddress) {
+            throw new Error(`undefined rollup dapp address`);
         }
 
         // reduce balance right away
         wallet.ether = wallet.ether.sub(amount);
 
         // create voucher
-        const input = defaultAbiCoder.encode(
-            ["address", "uint256"],
+        const call = CartesiDApp__factory.createInterface().encodeFunctionData(
+            "withdrawEther",
             [address, amount]
         );
-
-        const call =
-            EtherPortalFacet__factory.createInterface().encodeFunctionData(
-                "etherWithdrawal",
-                [input]
-            );
         return {
-            address: this.portalAddress,
+            address: this.dappAddress,
             payload: call,
         };
     }

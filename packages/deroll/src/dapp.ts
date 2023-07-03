@@ -3,6 +3,7 @@ import { hexlify } from "@ethersproject/bytes";
 import { toUtf8Bytes, toUtf8String } from "@ethersproject/strings";
 
 import { ABIRouter, URLRouter } from "./router";
+import { Route } from "./router/abi";
 import {
     NoticeRequest,
     NoticeResponse,
@@ -13,6 +14,7 @@ import {
     VoucherResponse,
 } from "./types";
 import { WalletApp } from "./wallet";
+import { DAppAddressRelayCodec } from "@deroll/codec";
 
 export interface DAppOutput {
     createNotice(request: NoticeRequest): Promise<number>;
@@ -23,26 +25,40 @@ export interface DAppOutput {
 export class DApp implements DAppOutput {
     private serverUrl: string;
 
-    private rollupAddress: string | undefined;
+    private dappAddress: string | undefined;
 
     public readonly inspectRouter: URLRouter;
 
     public readonly inputRouter: ABIRouter;
 
+    public readonly dappAddressRelayRoute: Route;
+
     public readonly wallet: WalletApp;
 
     constructor(serverUrl: string) {
         this.serverUrl = serverUrl;
-        this.rollupAddress = undefined;
-        this.wallet = new WalletApp(false); // XXX: do not verify yet, running host mode for testing
+        this.wallet = new WalletApp();
+        this.dappAddress = undefined;
+        this.dappAddressRelayRoute = new Route(
+            DAppAddressRelayCodec,
+            ([address]) => {
+                this.dappAddress = getAddress(address);
+                this.wallet.setDAppAddress(address);
+                console.log(
+                    `captured rollup dapp address: ${this.dappAddress}`
+                );
+                return "accept";
+            }
+        );
         this.inspectRouter = new URLRouter();
         this.inputRouter = new ABIRouter();
+        this.inputRouter.add(this.dappAddressRelayRoute);
         this.inputRouter.add(this.wallet.depositEtherRoute);
         this.inputRouter.add(this.wallet.withdrawEtherRoute);
     }
 
-    public getRollupAddress(): Readonly<string | undefined> {
-        return this.rollupAddress;
+    public getDAppAddress(): Readonly<string | undefined> {
+        return this.dappAddress;
     }
 
     private async create<T, R>(url: string, request: T): Promise<R> {
@@ -133,33 +149,17 @@ export class DApp implements DAppOutput {
                 console.log("no pending rollup request, trying again");
             } else {
                 const rollup_req: Request = await finish_req.json();
-                const metadata = rollup_req.data.metadata;
-                if (
-                    metadata &&
-                    metadata.epoch_index == 0 &&
-                    metadata.input_index == 0
-                ) {
-                    this.rollupAddress = getAddress(metadata.msg_sender);
-
-                    // now we know what is the rollups address (which is also the portal address)
-                    this.wallet.setPortalAddress(this.rollupAddress);
-
-                    console.log(
-                        `captured rollup address: ${this.rollupAddress}`
-                    );
-                } else {
-                    switch (rollup_req.request_type) {
-                        case "inspect_state":
-                            finish["status"] = await this.handle_inspect(
-                                rollup_req.data
-                            );
-                            break;
-                        case "advance_state":
-                            finish["status"] = await this.handle_advance(
-                                rollup_req.data
-                            );
-                            break;
-                    }
+                switch (rollup_req.request_type) {
+                    case "inspect_state":
+                        finish["status"] = await this.handle_inspect(
+                            rollup_req.data
+                        );
+                        break;
+                    case "advance_state":
+                        finish["status"] = await this.handle_advance(
+                            rollup_req.data
+                        );
+                        break;
                 }
             }
         }

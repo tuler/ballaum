@@ -10,17 +10,30 @@ export interface InputCodec<E, D> {
     decode(payload: string): D;
 }
 
-export class ABIInputCodec implements InputCodec<Type[], Result> {
+export class ABIHeaderInputCodec implements InputCodec<Type[], Result> {
+    public readonly framework: string;
     public readonly name: string;
+    public readonly address: string | undefined;
     public readonly header: string;
     public readonly types: Type[];
 
-    constructor(name: string, types: Type[]) {
-        this.name = name;
+    constructor(
+        types: Type[],
+        framework: string,
+        name: string,
+        address?: string
+    ) {
         this.types = types;
+        this.framework = framework;
+        this.name = name;
+        this.address = address;
 
-        // header is keccak256 of name
-        this.header = keccak256(toUtf8Bytes(name));
+        // header is keccak256 of keccak(framework) + keccak(name)
+        this.header = keccak256(
+            toUtf8Bytes(
+                keccak256(toUtf8Bytes(framework)) + keccak256(toUtf8Bytes(name))
+            )
+        );
     }
 
     public encode(values: any[]): string {
@@ -36,5 +49,23 @@ export class ABIInputCodec implements InputCodec<Type[], Result> {
             payload
         );
         return result;
+    }
+}
+
+export class ABIInputCodec implements InputCodec<Type[], Result> {
+    public readonly types: Type[];
+    public readonly address: string;
+
+    constructor(types: Type[], address: string) {
+        this.types = types;
+        this.address = address;
+    }
+
+    public encode(values: any[]): string {
+        return defaultAbiCoder.encode(this.types, values);
+    }
+
+    public decode(payload: string): Result {
+        return defaultAbiCoder.decode(this.types, payload);
     }
 }

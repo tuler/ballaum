@@ -2,30 +2,37 @@ import { describe, expect, test } from "@jest/globals";
 import { BigNumber } from "@ethersproject/bignumber";
 import { AddressZero } from "@ethersproject/constants";
 
-import { ERC20TransferCodec } from "../src";
+import { ERC20DepositCodec } from "../src";
 
-describe("ERC20TransferCodec", () => {
+describe("ERC20DepositCodec", () => {
     test("correct", () => {
         const values: any[] = [
+            true,
             AddressZero,
             AddressZero,
             BigNumber.from(1),
             "0x",
         ];
         expect(
-            ERC20TransferCodec.decode(ERC20TransferCodec.encode(values))
+            ERC20DepositCodec.decode(ERC20DepositCodec.encode(values))
         ).toEqual(values);
     });
 
     test("incorrect-", () => {
-        const values: any[] = [AddressZero, AddressZero, BigNumber.from(1)];
+        const values: any[] = [
+            true,
+            AddressZero,
+            AddressZero,
+            BigNumber.from(1),
+        ];
         expect(() =>
-            ERC20TransferCodec.decode(ERC20TransferCodec.encode(values))
+            ERC20DepositCodec.decode(ERC20DepositCodec.encode(values))
         ).toThrow();
     });
 
     test("incorrect+", () => {
         const values: any[] = [
+            true,
             AddressZero,
             AddressZero,
             BigNumber.from(1),
@@ -33,7 +40,7 @@ describe("ERC20TransferCodec", () => {
             1,
         ];
         expect(() =>
-            ERC20TransferCodec.decode(ERC20TransferCodec.encode(values))
+            ERC20DepositCodec.decode(ERC20DepositCodec.encode(values))
         ).toThrow();
     });
 });
