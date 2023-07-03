@@ -1,29 +1,32 @@
 fragment VoucherItem on Voucher {
-    id
     index
     destination
     payload
     input {
         index
-        epoch {
-            index
-        }
     }
     proof {
-        outputHashesRootHash
-        vouchersEpochRootHash
-        noticesEpochRootHash
-        machineStateHash
-        keccakInHashesSiblings
-        outputHashesInEpochSiblings
+        validity {
+            inputIndex
+            outputIndex
+            outputHashesRootHash
+            vouchersEpochRootHash
+            noticesEpochRootHash
+            machineStateHash
+            keccakInHashesSiblings
+            outputHashesInEpochSiblings
+        }
+        context
     }
 }
 
 query vouchers {
     vouchers {
         totalCount
-        nodes {
-            ...VoucherItem
+        edges {
+            node {
+                ...VoucherItem
+            }
         }
     }
 }
