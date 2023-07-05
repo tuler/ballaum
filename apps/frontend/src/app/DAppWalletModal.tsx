@@ -9,8 +9,8 @@ import {
     ModalOverlay,
 } from "@chakra-ui/react";
 import {
-    EtherPortalFacet__factory,
-    InputFacet__factory,
+    EtherPortal__factory,
+    InputBox__factory,
 } from "@cartesi/rollups";
 import {
     useContractWrite,
@@ -38,11 +38,12 @@ const DAppWalletModal: FC<DAppWalletModalProps> = ({
     onClose,
 }) => {
     const [amount, setAmount] = useState<BigNumber>(Zero);
+    const etherPortalDeployment = require("@cartesi/rollups/deployments/goerli/EtherPortal.json");
     const depositPrep = usePrepareContractWrite({
-        address: dapp.address,
-        abi: EtherPortalFacet__factory.abi,
-        functionName: "etherDeposit",
-        args: ["0x"],
+        address: etherPortalDeployment.address,
+        abi: EtherPortal__factory.abi,
+        functionName: "depositEther",
+        args: [dapp.address, "0x"],
         overrides: {
             value: amount,
         },
@@ -50,11 +51,12 @@ const DAppWalletModal: FC<DAppWalletModalProps> = ({
     const deposit = useContractWrite(depositPrep.config);
     const depositWait = useWaitForTransaction({ hash: deposit.data?.hash });
 
+    const inputBoxDeployment = require("@cartesi/rollups/deployments/goerli/InputBox.json");
     const withdrawPrep = usePrepareContractWrite({
-        address: dapp.address,
-        abi: InputFacet__factory.abi,
+        address: inputBoxDeployment.address,
+        abi: InputBox__factory.abi,
         functionName: "addInput",
-        args: [EtherWithdrawCodec.encode([amount])],
+        args: [dapp.address, EtherWithdrawCodec.encode([amount]) as `0x${string}`],
     });
     const withdraw = useContractWrite(withdrawPrep.config);
     const withdrawWait = useWaitForTransaction({ hash: withdraw.data?.hash });

@@ -4,7 +4,7 @@ import { useNetwork } from "wagmi";
 
 const baseURL: Record<number, string> = {
     5: "https://ballaum.goerli.rollups.staging.cartesi.io/inspect",
-    31337: "http://localhost:5005/inspect",
+    31337: "http://localhost:8080/inspect",
 };
 
 export enum InspectStatus {

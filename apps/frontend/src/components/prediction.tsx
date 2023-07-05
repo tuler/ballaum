@@ -12,7 +12,7 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import { InputFacet__factory } from "@cartesi/rollups";
+import { InputBox__factory } from "@cartesi/rollups";
 import {
     useContractWrite,
     usePrepareContractWrite,
@@ -40,18 +40,20 @@ export const PredictionCard: FC<PredictionCardProps> = ({
     const [team1Goals, setTeam1Goals] = useState<string>();
     const [team2Goals, setTeam2Goals] = useState<string>();
 
+    const inputBoxDeployment = require("@cartesi/rollups/deployments/goerli/InputBox.json");
     const { config, error } = usePrepareContractWrite({
-        address: dapp,
-        abi: InputFacet__factory.abi,
+        address: inputBoxDeployment.address,
+        abi: InputBox__factory.abi,
         functionName: "addInput",
         chainId,
         args: [
+            dapp as `0x${string}`,
             SetPredictionCodec.encode([
                 "wc2022",
                 match.id,
                 BigNumber.from(team1Goals || "0"),
                 BigNumber.from(team2Goals || "0"),
-            ]),
+            ]) as `0x${string}`,
         ],
     });
     const { data: tx, write } = useContractWrite(config);

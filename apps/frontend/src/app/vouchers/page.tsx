@@ -16,10 +16,10 @@ const VouchersPage: FC = () => {
             {vouchers.fetching && <Spinner />}
             {vouchers.data &&
                 dapp &&
-                vouchers.data.vouchers.nodes.map((voucher, i) => (
+                vouchers.data.vouchers.edges.map((edge, i) => (
                     <VoucherCard
                         key={`voucher-${i}`}
-                        voucher={voucher}
+                        voucher={edge.node}
                         dapp={dapp}
                     />
                 ))}

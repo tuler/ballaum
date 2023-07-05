@@ -1,4 +1,4 @@
-import { InputFacet__factory } from "@cartesi/rollups";
+import { InputBox__factory } from "@cartesi/rollups";
 import {
     Button,
     ButtonGroup,
@@ -29,12 +29,13 @@ export const AddMatchCard: FC<AddMatchCardProps> = ({ chainId, dapp }) => {
     const [team2, setTeam2] = useState<string>("");
     const [start, setStart] = useState<number>(0);
 
+    const inputBoxDeployment = require("@cartesi/rollups/deployments/goerli/InputBox.json");
     const { config, error } = usePrepareContractWrite({
-        address: dapp,
-        abi: InputFacet__factory.abi,
+        address: inputBoxDeployment.address,
+        abi: InputBox__factory.abi,
         functionName: "addInput",
         chainId,
-        args: [AddMatchCodec.encode(["wc2022", id, team1, team2, start])],
+        args: [dapp as `0x${string}`, AddMatchCodec.encode(["wc2022", id, team1, team2, start]) as `0x${string}`],
     });
     const { data: tx, write } = useContractWrite(config);
     const { data: receipt, isError, isLoading } = useWaitForTransaction(tx);

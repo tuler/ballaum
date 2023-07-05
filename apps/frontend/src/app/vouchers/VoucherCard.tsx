@@ -22,7 +22,7 @@ import {
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
-import { IOutput__factory } from "@cartesi/rollups";
+import { CartesiDApp__factory } from "@cartesi/rollups";
 import { VoucherItemFragmentDoc } from "../../../generated-src/graphql/graphql";
 
 export interface VoucherCardProps {
@@ -37,18 +37,13 @@ export const VoucherCard: FC<VoucherCardProps> = ({
     const voucher = useFragment(VoucherItemFragmentDoc, voucherFragment);
     const { config, error: pError } = usePrepareContractWrite({
         address: dapp,
-        abi: IOutput__factory.abi,
+        abi: CartesiDApp__factory.abi,
         functionName: "executeVoucher",
         enabled: !!voucher.proof, // only enabled if voucher has proof
         args: [
-            voucher.destination,
-            voucher.payload,
-            {
-                ...voucher.proof,
-                epochIndex: voucher.input.epoch.index,
-                inputIndex: voucher.input.index,
-                outputIndex: voucher.index,
-            },
+            voucher.destination as `0x${string}`,
+            voucher.payload as `0x${string}`,
+            voucher.proof as any
         ],
     });
 
@@ -58,7 +53,7 @@ export const VoucherCard: FC<VoucherCardProps> = ({
     return (
         <Card>
             <CardHeader>
-                <Heading size="md">Voucher {voucher.id}</Heading>
+                <Heading size="md">Voucher ${voucher.index} from input {`${voucher.input.index}`}</Heading>
             </CardHeader>
             <CardBody>
                 <Text>Destination</Text>

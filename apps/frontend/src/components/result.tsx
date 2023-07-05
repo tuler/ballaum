@@ -15,7 +15,7 @@ import {
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
-import { InputFacet__factory } from "@cartesi/rollups";
+import { InputBox__factory } from "@cartesi/rollups";
 import { Match, SetResultCodec } from "ballaum-common";
 
 type ResultCardProps = {
@@ -27,17 +27,19 @@ export const ResultCard: FC<ResultCardProps> = ({ dapp, match }) => {
     const [team1Goals, setTeam1Goals] = useState<string>();
     const [team2Goals, setTeam2Goals] = useState<string>();
 
+    const inputBoxDeployment = require("@cartesi/rollups/deployments/goerli/InputBox.json");
     const { config, error } = usePrepareContractWrite({
-        address: dapp,
-        abi: InputFacet__factory.abi,
+        address: inputBoxDeployment.address,
+        abi: InputBox__factory.abi,
         functionName: "addInput",
         args: [
+            dapp as `0x${string}`,
             SetResultCodec.encode([
                 "wc2022",
                 match.id,
                 parseInt(team1Goals ?? "0"),
                 parseInt(team2Goals ?? "0"),
-            ]),
+            ]) as `0x${string}`,
         ],
     });
     const { data: tx, write } = useContractWrite(config);

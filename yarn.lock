@@ -1190,36 +1190,13 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@cartesi/rollups@0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@cartesi/rollups/-/rollups-0.8.1.tgz#12739774699801d01086106ff24bf80409e76c44"
-  integrity sha512-UpmXODsotEgGyUDOJ3xCUr6l+J8yp2DLaZsdOEJO/3152xqT7boJpawJrNRXW0/fvKCn474Ph7Ux9WhDktFsOw==
-  dependencies:
-    "@cartesi/token" "^1.8.0"
-    "@cartesi/util" "^5.0.1"
-    "@openzeppelin/contracts" "^4.7.1"
-
-"@cartesi/rollups@^0.9.1":
+"@cartesi/rollups@0.9.1", "@cartesi/rollups@^0.9.1":
   version "0.9.1"
   resolved "https://registry.yarnpkg.com/@cartesi/rollups/-/rollups-0.9.1.tgz#f6cd6294553b799016b721463160c65dadc6ff44"
   integrity sha512-KTkvmRvWGKfecv2Vlnr6PmyNrVAtQBwzoAoqATWnZafOO06Pl/jSqVjyewLHsz+44tEst6lRsV8WDos4FeGlUA==
   dependencies:
     "@cartesi/util" "^5.0.2"
     "@openzeppelin/contracts" "4.8.0"
-
-"@cartesi/token@^1.8.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@cartesi/token/-/token-1.8.0.tgz#1f19bda1c5bd4e9e784cbd671c096e0333f11fb3"
-  integrity sha512-jcr1ItbEjvhfy0A5KjOwLUd8Yqawo+F7o6p+9sxqfi1RYa39jTL1qhbF9xui4dR7slVrTwqWQTRHHwlfSHzq8A==
-  dependencies:
-    "@openzeppelin/contracts" "^2.5.0"
-
-"@cartesi/util@^5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@cartesi/util/-/util-5.0.1.tgz#953916125122595488c366df0895e5bb79897b55"
-  integrity sha512-KCUHKvjCiZMWo4FojBrZ/2/RHbSiE948IndG8nqEcpYh4CHlumHoKSZKdfoxWBArs12MhupT3v50Pt9e4c5/Hw==
-  dependencies:
-    "@openzeppelin/contracts" "3.2.1-solc-0.7"
 
 "@cartesi/util@^5.0.2":
   version "5.0.2"
@@ -3743,15 +3720,10 @@
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-3.2.1-solc-0.7.tgz#067a60918b935d4733208edb3d7e35cd1d51026b"
   integrity sha512-VfKZE9L2HNaZVBR7l5yHbRmap3EiVw9F5iVXRRDdgfnA9vQ1yFanrs0VYmdo2VIXC+EsI9wPPYZY9Ic7/qDBdw==
 
-"@openzeppelin/contracts@4.8.0", "@openzeppelin/contracts@^4.7.1":
+"@openzeppelin/contracts@4.8.0":
   version "4.8.0"
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.8.0.tgz#6854c37df205dd2c056bdfa1b853f5d732109109"
   integrity sha512-AGuwhRRL+NaKx73WKRNzeCxOCOCxpaqF+kp8TJ89QzAipSwZy/NoflkWaL9bywXFRhIzXt8j38sfF7KBKCPWLw==
-
-"@openzeppelin/contracts@^2.5.0":
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-2.5.1.tgz#c76e3fc57aa224da3718ec351812a4251289db31"
-  integrity sha512-qIy6tLx8rtybEsIOAlrM4J/85s2q2nPkDqj/Rx46VakBZ0LwtFhXIVub96LXHczQX0vaqmAueDqNPXtbSXSaYQ==
 
 "@peculiar/asn1-schema@^2.1.6", "@peculiar/asn1-schema@^2.3.0":
   version "2.3.3"

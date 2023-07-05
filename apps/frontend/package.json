@@ -1,6 +1,6 @@
 {
     "name": "frontend",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "private": true,
     "scripts": {
         "build": "run-s codegen build:next",
@@ -13,7 +13,7 @@
         "storybook": "start-storybook -p 6006"
     },
     "dependencies": {
-        "@cartesi/rollups": "0.8.1",
+        "@cartesi/rollups": "0.9.1",
         "@chakra-ui/anatomy": "^2.1.0",
         "@chakra-ui/icons": "^2.0.13",
         "@chakra-ui/react": "^2.4.3",

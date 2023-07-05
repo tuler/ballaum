@@ -7,7 +7,7 @@ import { useNetwork } from "wagmi";
 
 const urls: Record<number, string> = {
     5: "https://ballaum.goerli.rollups.staging.cartesi.io/graphql",
-    31337: "http://localhost:4000/graphql",
+    31337: "http://localhost:8080/graphql",
 };
 
 const clients: Record<number, Client> = mapValues(urls, (url) =>
