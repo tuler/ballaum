@@ -34,11 +34,19 @@ export class WalletApp {
             EtherDepositCodec,
             ([address, amount], { msg_sender }) => {
                 console.log(`deposit ${formatEther(amount)} eth to ${address}`);
-                if (msg_sender !== EtherDepositCodec.address) {
+                if (getAddress(msg_sender) !== EtherDepositCodec.address) {
                     // must come from portal
+                    console.error("msg_sender is not the EtherPortal");
                     return "reject";
                 }
                 this.depositEther(address, amount);
+                console.log(
+                    `completed deposit of ${formatEther(
+                        amount
+                    )} eth to ${address}: current balance is ${
+                        this.wallet(address).ether
+                    }`
+                );
                 return "accept";
             }
         );
@@ -73,11 +81,19 @@ export class WalletApp {
                 console.log(
                     `deposit ${formatEther(amount)} ${token} to ${address}`
                 );
-                if (msg_sender !== ERC20DepositCodec.address) {
+                if (getAddress(msg_sender) !== ERC20DepositCodec.address) {
                     // must come from portal
+                    console.error("msg_sender is not the ERC20Portal");
                     return "reject";
                 }
                 this.depositERC20(token, address, amount);
+                console.log(
+                    `completed deposit of ${formatEther(
+                        amount
+                    )} ${token} to ${address}: current balance is ${
+                        this.wallet(address).erc20[token]
+                    }`
+                );
                 return "accept";
             }
         );

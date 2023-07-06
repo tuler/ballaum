@@ -21,6 +21,7 @@ import {
 import { Match, SetPredictionCodec } from "ballaum-common";
 import { BigNumber } from "ethers";
 import { formatEther, parseEther } from "@ethersproject/units";
+import { AddressBook } from "@deroll/codec";
 
 type PredictionCardProps = {
     enrolled: boolean;
@@ -40,9 +41,8 @@ export const PredictionCard: FC<PredictionCardProps> = ({
     const [team1Goals, setTeam1Goals] = useState<string>();
     const [team2Goals, setTeam2Goals] = useState<string>();
 
-    const inputBoxDeployment = require("@cartesi/rollups/deployments/goerli/InputBox.json");
     const { config, error } = usePrepareContractWrite({
-        address: inputBoxDeployment.address,
+        address: AddressBook.InputBox,
         abi: InputBox__factory.abi,
         functionName: "addInput",
         chainId,

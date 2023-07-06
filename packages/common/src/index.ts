@@ -11,6 +11,7 @@ export const AddMatchCodec = new ABIHeaderInputCodec(
         "string", // team2
         "uint", // timestamp of the match
     ],
+    false,
     "ballaum",
     "AddMatch"
 );
@@ -22,6 +23,7 @@ export const SetPredictionCodec = new ABIHeaderInputCodec(
         "uint8", // team1Score
         "uint8", // team2Score
     ],
+    false,
     "ballaum",
     "SetPrediction"
 );
@@ -32,11 +34,13 @@ export const SetResultCodec = new ABIHeaderInputCodec(
         "uint8", // team1Score
         "uint8", // team2Score
     ],
+    false,
     "ballaum",
     "SetResult"
 );
 export const TerminateCodec = new ABIHeaderInputCodec(
     ["string"], // tournamentId
+    false,
     "ballaum",
     "Terminate"
 );

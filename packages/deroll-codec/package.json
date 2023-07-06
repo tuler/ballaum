@@ -17,7 +17,8 @@
     "dependencies": {
         "@ethersproject/abi": "^5.7",
         "@ethersproject/keccak256": "^5.7",
-        "@ethersproject/strings": "^5.7"
+        "@ethersproject/strings": "^5.7",
+        "@ethersproject/solidity": "^5.7"
     },
     "devDependencies": {
         "@ethersproject/constants": "^5.7",

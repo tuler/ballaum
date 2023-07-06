@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 const contract: Record<number, `0x${string}`> = {
     5: "0xE6D220a982A668737E3782539892837071825ca1",
-    31337: "0xF8C694fd58360De278d5fF2276B7130Bfdc0192A",
+    31337: "0x142105FC8dA71191b3a13C738Ba0cF4BC33325e2",
 };
 
 export const useDAppAddress = (): `0x${string}` | undefined => {

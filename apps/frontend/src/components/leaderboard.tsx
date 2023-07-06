@@ -19,6 +19,7 @@ import {
     useWaitForTransaction,
 } from "wagmi";
 import { InputBox__factory } from "@cartesi/rollups";
+import { AddressBook } from "@deroll/codec";
 
 type LeaderboardTableProps = {
     dapp: string;
@@ -41,13 +42,15 @@ export const LeaderboardTable: FC<LeaderboardTableProps> = ({
         .map<UserScore>(([user, score]) => ({ user, score }))
         .sort((a, b) => b.score - a.score);
 
-    const inputBoxDeployment = require("@cartesi/rollups/deployments/goerli/InputBox.json");
     const { config, error } = usePrepareContractWrite({
-        address: inputBoxDeployment.address,
+        address: AddressBook.InputBox,
         abi: InputBox__factory.abi,
         functionName: "addInput",
         enabled: !!tournament,
-        args: [dapp as `0x${string}`, TerminateCodec.encode([tournament?.id ?? ""]) as `0x${string}`],
+        args: [
+            dapp as `0x${string}`,
+            TerminateCodec.encode([tournament?.id ?? ""]) as `0x${string}`,
+        ],
     });
 
     const { data: tx, write } = useContractWrite(config);

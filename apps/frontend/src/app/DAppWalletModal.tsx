@@ -8,16 +8,13 @@ import {
     ModalContent,
     ModalOverlay,
 } from "@chakra-ui/react";
-import {
-    EtherPortal__factory,
-    InputBox__factory,
-} from "@cartesi/rollups";
+import { EtherPortal__factory, InputBox__factory } from "@cartesi/rollups";
 import {
     useContractWrite,
     usePrepareContractWrite,
     useWaitForTransaction,
 } from "wagmi";
-import { EtherWithdrawCodec } from "@deroll/codec";
+import { AddressBook, EtherWithdrawCodec } from "@deroll/codec";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Zero } from "@ethersproject/constants";
 
@@ -38,9 +35,8 @@ const DAppWalletModal: FC<DAppWalletModalProps> = ({
     onClose,
 }) => {
     const [amount, setAmount] = useState<BigNumber>(Zero);
-    const etherPortalDeployment = require("@cartesi/rollups/deployments/goerli/EtherPortal.json");
     const depositPrep = usePrepareContractWrite({
-        address: etherPortalDeployment.address,
+        address: AddressBook.EtherPortal,
         abi: EtherPortal__factory.abi,
         functionName: "depositEther",
         args: [dapp.address, "0x"],
@@ -51,12 +47,14 @@ const DAppWalletModal: FC<DAppWalletModalProps> = ({
     const deposit = useContractWrite(depositPrep.config);
     const depositWait = useWaitForTransaction({ hash: deposit.data?.hash });
 
-    const inputBoxDeployment = require("@cartesi/rollups/deployments/goerli/InputBox.json");
     const withdrawPrep = usePrepareContractWrite({
-        address: inputBoxDeployment.address,
+        address: AddressBook.InputBox,
         abi: InputBox__factory.abi,
         functionName: "addInput",
-        args: [dapp.address, EtherWithdrawCodec.encode([amount]) as `0x${string}`],
+        args: [
+            dapp.address,
+            EtherWithdrawCodec.encode([amount, "0x"]) as `0x${string}`,
+        ],
     });
     const withdraw = useContractWrite(withdrawPrep.config);
     const withdrawWait = useWaitForTransaction({ hash: withdraw.data?.hash });

@@ -5,6 +5,20 @@ import { AddressZero } from "@ethersproject/constants";
 import { ERC20DepositCodec } from "../src";
 
 describe("ERC20DepositCodec", () => {
+    test("decode harcoded", () => {
+        expect(
+            ERC20DepositCodec.decode(
+                "0x014ed7c70f96b99c776995fb64377f0d4ab3b0e1c1f39fd6e51aad88f6f4ce6ab8827279cfffb922660000000000000000000000000000000000000000000000000000000000000064"
+            )
+        ).toEqual([
+            true,
+            "0x4ed7c70f96b99c776995fb64377f0d4ab3b0e1c1",
+            "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+            BigNumber.from(100),
+            "0x",
+        ]);
+    });
+
     test("correct", () => {
         const values: any[] = [
             true,

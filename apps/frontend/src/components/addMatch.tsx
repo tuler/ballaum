@@ -9,6 +9,7 @@ import {
     Input,
     Text,
 } from "@chakra-ui/react";
+import { AddressBook } from "@deroll/codec";
 import { AddMatchCodec } from "ballaum-common";
 import { DatePickerInput } from "chakra-datetime-picker";
 import { FC, useState } from "react";
@@ -29,13 +30,21 @@ export const AddMatchCard: FC<AddMatchCardProps> = ({ chainId, dapp }) => {
     const [team2, setTeam2] = useState<string>("");
     const [start, setStart] = useState<number>(0);
 
-    const inputBoxDeployment = require("@cartesi/rollups/deployments/goerli/InputBox.json");
     const { config, error } = usePrepareContractWrite({
-        address: inputBoxDeployment.address,
+        address: AddressBook.InputBox,
         abi: InputBox__factory.abi,
         functionName: "addInput",
         chainId,
-        args: [dapp as `0x${string}`, AddMatchCodec.encode(["wc2022", id, team1, team2, start]) as `0x${string}`],
+        args: [
+            dapp as `0x${string}`,
+            AddMatchCodec.encode([
+                "wc2022",
+                id,
+                team1,
+                team2,
+                start,
+            ]) as `0x${string}`,
+        ],
     });
     const { data: tx, write } = useContractWrite(config);
     const { data: receipt, isError, isLoading } = useWaitForTransaction(tx);

@@ -3,6 +3,7 @@ import { ABIHeaderInputCodec, ABIInputCodec } from "@deroll/codec";
 
 import { DAppOutput } from "../dapp";
 import { RequestData, RequestHandlerResult, RequestMetadata } from "../types";
+import { getAddress } from "@ethersproject/address";
 
 export type Handler = (
     result: Result,
@@ -23,7 +24,7 @@ export class Route {
     public match(request: RequestData): boolean {
         if (
             this.codec.address !== undefined &&
-            this.codec.address !== request.metadata.msg_sender
+            this.codec.address !== getAddress(request.metadata.msg_sender)
         ) {
             // no match if codec specifies an address that is not the request's sender
             return false;
