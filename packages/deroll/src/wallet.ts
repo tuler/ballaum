@@ -9,6 +9,7 @@ import {
     EtherWithdrawCodec,
     ERC20DepositCodec,
     ERC20WithdrawCodec,
+    AddressBook,
 } from "@deroll/codec";
 
 import { Route } from "./router/abi";
@@ -34,7 +35,7 @@ export class WalletApp {
             EtherDepositCodec,
             ([address, amount], { msg_sender }) => {
                 console.log(`deposit ${formatEther(amount)} eth to ${address}`);
-                if (getAddress(msg_sender) !== EtherDepositCodec.address) {
+                if (getAddress(msg_sender) !== AddressBook.EtherPortal) {
                     // must come from portal
                     console.error("msg_sender is not the EtherPortal");
                     return "reject";
@@ -48,7 +49,8 @@ export class WalletApp {
                     }`
                 );
                 return "accept";
-            }
+            },
+            AddressBook.EtherPortal
         );
 
         this.withdrawEtherRoute = new Route(
@@ -81,7 +83,7 @@ export class WalletApp {
                 console.log(
                     `deposit ${formatEther(amount)} ${token} to ${address}`
                 );
-                if (getAddress(msg_sender) !== ERC20DepositCodec.address) {
+                if (getAddress(msg_sender) !== AddressBook.ERC20Portal) {
                     // must come from portal
                     console.error("msg_sender is not the ERC20Portal");
                     return "reject";
@@ -95,7 +97,8 @@ export class WalletApp {
                     }`
                 );
                 return "accept";
-            }
+            },
+            AddressBook.ERC20Portal
         );
 
         this.withdrawERC20Route = new Route(

@@ -5,7 +5,7 @@ import { parseEther } from "@ethersproject/units";
 import { DAppOutput } from "../src/dapp";
 import { WalletApp } from "../src/wallet";
 import { RequestMetadata } from "../src/types";
-import { ERC20DepositCodec, EtherDepositCodec } from "@deroll/codec";
+import { AddressBook } from "@deroll/codec";
 
 describe("Wallet", () => {
     let dapp: DAppOutput;
@@ -198,7 +198,7 @@ describe("Wallet", () => {
             block_number: 0,
             epoch_index: 0,
             input_index: 0,
-            msg_sender: EtherDepositCodec.address,
+            msg_sender: AddressBook.EtherPortal,
             timestamp: 0,
         };
         expect(
@@ -238,7 +238,7 @@ describe("Wallet", () => {
             block_number: 0,
             epoch_index: 0,
             input_index: 0,
-            msg_sender: ERC20DepositCodec.address,
+            msg_sender: AddressBook.ERC20Portal,
             timestamp: 0,
         };
         expect(

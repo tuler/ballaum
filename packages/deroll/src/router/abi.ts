@@ -1,5 +1,5 @@
 import { Result } from "@ethersproject/abi";
-import { ABIHeaderInputCodec, ABIInputCodec } from "@deroll/codec";
+import { ABIInputCodec } from "@deroll/codec";
 
 import { DAppOutput } from "../dapp";
 import { RequestData, RequestHandlerResult, RequestMetadata } from "../types";
@@ -13,23 +13,25 @@ export type Handler = (
 ) => RequestHandlerResult | Promise<RequestHandlerResult>;
 
 export class Route {
-    public readonly codec: ABIInputCodec | ABIHeaderInputCodec;
+    public readonly codec: ABIInputCodec;
     public readonly handler: Handler;
+    public readonly address: string | undefined;
 
-    constructor(codec: ABIInputCodec | ABIHeaderInputCodec, handler: Handler) {
+    constructor(codec: ABIInputCodec, handler: Handler, address?: string) {
         this.codec = codec;
         this.handler = handler;
+        this.address = address;
     }
 
     public match(request: RequestData): boolean {
         if (
-            this.codec.address !== undefined &&
-            this.codec.address !== getAddress(request.metadata.msg_sender)
+            this.address !== undefined &&
+            this.address !== getAddress(request.metadata.msg_sender)
         ) {
-            // no match if codec specifies an address that is not the request's sender
+            // no match if route specifies an address that is not the request's sender
             return false;
         }
-        if (this.codec instanceof ABIHeaderInputCodec) {
+        if (this.codec.header !== undefined) {
             // if codec specifies header, payload must have it
             return request.payload.startsWith(this.codec.header);
         }

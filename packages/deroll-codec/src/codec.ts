@@ -5,7 +5,6 @@ import { getAddress } from "@ethersproject/address";
 import { pack } from "@ethersproject/solidity";
 import { unpack } from "./unpack";
 
-type Type = string | ParamType;
 const HEADER_TYPE = "bytes32";
 
 export interface InputCodec<E, D> {
@@ -13,84 +12,52 @@ export interface InputCodec<E, D> {
     decode(payload: string): D;
 }
 
-export class ABIHeaderInputCodec implements InputCodec<string[], Result> {
+export class ABIInputCodec implements InputCodec<string[], Result> {
     public readonly types: string[];
-    public readonly packed: boolean;
-    public readonly framework: string;
-    public readonly name: string;
-    public readonly address: string | undefined;
-    public readonly header: string;
+    public readonly header?: string;
+    _encode;
+    _decode;
 
-    constructor(
-        types: string[],
-        packed: boolean,
-        framework: string,
-        name: string,
-        address?: string
-    ) {
-        this.types = types;
-        this.packed = packed;
-        this.framework = framework;
-        this.name = name;
-        if (address !== undefined) {
-            this.address = getAddress(address);
+    constructor(types: string[], packed: boolean, header?: [string, string]) {
+        // defines encode/decode methods depending on `packed`
+        if (packed) {
+            this._encode = pack;
+            this._decode = unpack;
+        } else {
+            this._encode = defaultAbiCoder.encode.bind(defaultAbiCoder);
+            this._decode = defaultAbiCoder.decode.bind(defaultAbiCoder);
         }
 
-        // header is keccak256 of keccak(framework) + keccak(name)
-        this.header = keccak256(
-            toUtf8Bytes(
-                keccak256(toUtf8Bytes(framework)) + keccak256(toUtf8Bytes(name))
-            )
-        );
-    }
-
-    public encode(values: any[]): string {
-        if (this.packed) {
-            return pack([HEADER_TYPE, ...this.types], [this.header, ...values]);
+        // defines types and header depending on `header`
+        if (header === undefined) {
+            this.types = types;
         } else {
-            return defaultAbiCoder.encode(
-                [HEADER_TYPE, ...this.types],
-                [this.header, ...values]
+            // we should have a header (framework + method)
+            this.types = [HEADER_TYPE, ...types];
+            // actual header will be keccak256 of keccak256(framework) + keccak256(method)
+            this.header = keccak256(
+                toUtf8Bytes(
+                    keccak256(toUtf8Bytes(header[0])) +
+                        keccak256(toUtf8Bytes(header[1]))
+                )
             );
         }
     }
 
-    public decode(payload: string): Result {
-        const types = [HEADER_TYPE, ...this.types];
-        if (this.packed) {
-            const [_header, ...result] = unpack(types, payload);
-            return result;
-        } else {
-            const [_header, ...result] = defaultAbiCoder.decode(types, payload);
-            return result;
-        }
-    }
-}
-
-export class ABIInputCodec implements InputCodec<string[], Result> {
-    public readonly types: string[];
-    public readonly packed: boolean;
-    public readonly address: string;
-
-    constructor(types: string[], packed: boolean, address: string) {
-        this.types = types;
-        this.packed = packed;
-        this.address = getAddress(address);
-    }
-
     public encode(values: any[]): string {
-        if (this.packed) {
-            return pack(this.types, values);
+        if (this.header !== undefined) {
+            return this._encode(this.types, [this.header, ...values]);
         } else {
-            return defaultAbiCoder.encode(this.types, values);
+            return this._encode(this.types, values);
         }
     }
 
     public decode(payload: string): Result {
-        if (this.packed) {
-            return unpack(this.types, payload);
+        if (this.header !== undefined) {
+            const [_header, ...result] = this._decode(this.types, payload);
+            return result;
         } else {
-            return defaultAbiCoder.decode(this.types, payload);
+            return this._decode(this.types, payload);
         }
     }
 }

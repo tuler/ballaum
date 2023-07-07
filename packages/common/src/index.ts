@@ -1,9 +1,9 @@
-import { ABIHeaderInputCodec } from "@deroll/codec";
+import { ABIInputCodec } from "@deroll/codec";
 
 export * from "./types";
 
 // application codecs
-export const AddMatchCodec = new ABIHeaderInputCodec(
+export const AddMatchCodec = new ABIInputCodec(
     [
         "string", // tournamentId
         "string", // matchId
@@ -12,11 +12,10 @@ export const AddMatchCodec = new ABIHeaderInputCodec(
         "uint", // timestamp of the match
     ],
     false,
-    "ballaum",
-    "AddMatch"
+    ["ballaum", "AddMatch"]
 );
 
-export const SetPredictionCodec = new ABIHeaderInputCodec(
+export const SetPredictionCodec = new ABIInputCodec(
     [
         "string", // tournamentId
         "string", // matchId
@@ -24,10 +23,9 @@ export const SetPredictionCodec = new ABIHeaderInputCodec(
         "uint8", // team2Score
     ],
     false,
-    "ballaum",
-    "SetPrediction"
+    ["ballaum", "SetPrediction"]
 );
-export const SetResultCodec = new ABIHeaderInputCodec(
+export const SetResultCodec = new ABIInputCodec(
     [
         "string", // tournamentId
         "string", // matchId
@@ -35,12 +33,10 @@ export const SetResultCodec = new ABIHeaderInputCodec(
         "uint8", // team2Score
     ],
     false,
-    "ballaum",
-    "SetResult"
+    ["ballaum", "SetResult"]
 );
-export const TerminateCodec = new ABIHeaderInputCodec(
+export const TerminateCodec = new ABIInputCodec(
     ["string"], // tournamentId
     false,
-    "ballaum",
-    "Terminate"
+    ["ballaum", "Terminate"]
 );

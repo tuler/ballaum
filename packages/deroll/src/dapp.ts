@@ -14,7 +14,7 @@ import {
     VoucherResponse,
 } from "./types";
 import { WalletApp } from "./wallet";
-import { DAppAddressRelayCodec } from "@deroll/codec";
+import { AddressBook, DAppAddressRelayCodec } from "@deroll/codec";
 
 export interface DAppOutput {
     createNotice(request: NoticeRequest): Promise<number>;
@@ -48,7 +48,8 @@ export class DApp implements DAppOutput {
                     `captured rollup dapp address: ${this.dappAddress}`
                 );
                 return "accept";
-            }
+            },
+            AddressBook.DAppAddressRelay
         );
         this.inspectRouter = new URLRouter();
         this.inputRouter = new ABIRouter();

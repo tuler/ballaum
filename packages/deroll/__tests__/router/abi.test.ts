@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from "@jest/globals";
 import { AddressZero } from "@ethersproject/constants";
 
-import { ABIHeaderInputCodec, ABIInputCodec } from "@deroll/codec";
+import { ABIInputCodec } from "@deroll/codec";
 import { ABIRouter, Handler, Route } from "../../src/router/abi";
 import { RequestData } from "../../src/types";
 import { DAppOutput } from "../../src";
@@ -47,8 +47,8 @@ describe("ABIRouter", () => {
         });
         const types = ["string", "uint8"];
         const values = ["Hey", 128];
-        const codec = new ABIInputCodec(types, false, ADDRESS_1);
-        const route = router.add(new Route(codec, handler));
+        const codec = new ABIInputCodec(types, false);
+        const route = router.add(new Route(codec, handler, ADDRESS_1));
 
         const metadata = {
             block_number: 0,
@@ -71,8 +71,8 @@ describe("ABIRouter", () => {
         });
         const types = ["string", "uint8"];
         const values = ["Hey", 128];
-        const codec = new ABIInputCodec(types, false, ADDRESS_1);
-        const route = router.add(new Route(codec, handler));
+        const codec = new ABIInputCodec(types, false);
+        const route = router.add(new Route(codec, handler, ADDRESS_1));
 
         const metadata = {
             block_number: 0,
@@ -95,8 +95,8 @@ describe("ABIRouter", () => {
         });
         const types = ["string", "uint8"];
         const values = ["Hey", 128];
-        const codec = new ABIInputCodec(types, false, ADDRESS_1);
-        const route = router.add(new Route(codec, handler));
+        const codec = new ABIInputCodec(types, false);
+        const route = router.add(new Route(codec, handler, ADDRESS_1));
 
         // incorrect sender address
         const metadata = {
@@ -131,10 +131,10 @@ describe("ABIRouter", () => {
         };
 
         const routeA = router.add(
-            new Route(new ABIInputCodec([], false, ADDRESS_1), handlerA)
+            new Route(new ABIInputCodec([], false), handlerA, ADDRESS_1)
         );
         router.add(
-            new Route(new ABIInputCodec([], false, ADDRESS_2), handlerB)
+            new Route(new ABIInputCodec([], false), handlerB, ADDRESS_2)
         );
 
         const payload = routeA.codec.encode([]);
@@ -166,13 +166,13 @@ describe("ABIRouter", () => {
 
         const routeA = router.add(
             new Route(
-                new ABIHeaderInputCodec([], false, FRAMEWORK_1, METHOD_1),
+                new ABIInputCodec([], false, [FRAMEWORK_1, METHOD_1]),
                 handlerA
             )
         );
         router.add(
             new Route(
-                new ABIHeaderInputCodec([], false, FRAMEWORK_2, METHOD_2),
+                new ABIInputCodec([], false, [FRAMEWORK_2, METHOD_2]),
                 handlerB
             )
         );
@@ -215,46 +215,31 @@ describe("ABIRouter", () => {
 
         const routeA = router.add(
             new Route(
-                new ABIHeaderInputCodec(
-                    [],
-                    false,
-                    FRAMEWORK_1,
-                    METHOD_1,
-                    ADDRESS_1
-                ),
-                handlerA
+                new ABIInputCodec([], false, [FRAMEWORK_1, METHOD_1]),
+                handlerA,
+                ADDRESS_1
             )
         );
         router.add(
-            new Route(new ABIInputCodec([], false, ADDRESS_2), handlerB)
+            new Route(new ABIInputCodec([], false), handlerB, ADDRESS_2)
         );
         router.add(
             new Route(
-                new ABIHeaderInputCodec(
-                    [],
-                    false,
-                    FRAMEWORK_1,
-                    METHOD_1,
-                    ADDRESS_2
-                ),
-                handlerC
+                new ABIInputCodec([], false, [FRAMEWORK_1, METHOD_1]),
+                handlerC,
+                ADDRESS_2
             )
         );
         router.add(
             new Route(
-                new ABIHeaderInputCodec(
-                    [],
-                    false,
-                    FRAMEWORK_1,
-                    METHOD_2,
-                    ADDRESS_1
-                ),
-                handlerD
+                new ABIInputCodec([], false, [FRAMEWORK_1, METHOD_2]),
+                handlerD,
+                ADDRESS_1
             )
         );
         router.add(
             new Route(
-                new ABIHeaderInputCodec([], false, FRAMEWORK_2, METHOD_2),
+                new ABIInputCodec([], false, [FRAMEWORK_2, METHOD_2]),
                 handlerE
             )
         );

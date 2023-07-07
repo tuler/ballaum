@@ -1,5 +1,5 @@
 import { AddressBook } from "./addressBook";
-import { ABIInputCodec, ABIHeaderInputCodec } from "./codec";
+import { ABIInputCodec } from "./codec";
 
 export * from "./addressBook";
 export * from "./codec";
@@ -8,30 +8,22 @@ export * from "./unpack";
 // wallet codecs
 export const EtherDepositCodec = new ABIInputCodec(
     ["address", "uint256", "bytes"],
-    true,
-    AddressBook.EtherPortal
+    true
 );
-export const EtherWithdrawCodec = new ABIHeaderInputCodec(
+export const EtherWithdrawCodec = new ABIInputCodec(
     ["uint256", "bytes"],
     true,
-    "wallet",
-    "Ether_Withdraw"
+    ["wallet", "Ether_Withdraw"]
 );
 export const ERC20DepositCodec = new ABIInputCodec(
     ["bool", "address", "address", "uint256", "bytes"],
-    true,
-    AddressBook.ERC20Portal
+    true
 );
-export const ERC20WithdrawCodec = new ABIHeaderInputCodec(
+export const ERC20WithdrawCodec = new ABIInputCodec(
     ["address", "uint256", "bytes"],
     true,
-    "wallet",
-    "ERC20_Withdraw"
+    ["wallet", "ERC20_Withdraw"]
 );
 
 // relay codecs
-export const DAppAddressRelayCodec = new ABIInputCodec(
-    ["address"],
-    true,
-    AddressBook.DAppAddressRelay
-);
+export const DAppAddressRelayCodec = new ABIInputCodec(["address"], true);
