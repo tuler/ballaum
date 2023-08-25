@@ -1,5 +1,5 @@
 import { mapObject } from "underscore";
-import { AddressZero } from "@ethersproject/constants";
+import { zeroAddress } from "viem";
 
 import { Tournament } from "../src/tournament";
 
@@ -17,7 +17,7 @@ describe("Tournament", () => {
                     start: new Date("2022-11-20T20:00:00+04:00").getTime(),
                     predictions: {},
                 },
-            ]
+            ],
         );
     });
 
@@ -28,22 +28,22 @@ describe("Tournament", () => {
     test("invalid match", () => {
         expect(() =>
             tournament.setPrediction("A1", {
-                from: AddressZero,
+                from: zeroAddress,
                 team1Goals: 0,
                 team2Goals: 0,
                 timestamp: new Date("2022-11-20T20:00:00+04:00").getTime(),
-            })
+            }),
         ).toThrow("unknown match A1");
     });
 
     test("prediction overdue", () => {
         expect(() =>
             tournament.setPrediction("A11", {
-                from: AddressZero,
+                from: zeroAddress,
                 team1Goals: 0,
                 team2Goals: 0,
                 timestamp: new Date("2022-11-20T20:00:00+04:00").getTime(),
-            })
+            }),
         ).toThrow("match A11 already started");
     });
 
@@ -51,46 +51,46 @@ describe("Tournament", () => {
         tournament.terminate();
         expect(() =>
             tournament.setPrediction("A11", {
-                from: AddressZero,
+                from: zeroAddress,
                 team1Goals: 0,
                 team2Goals: 0,
                 timestamp: new Date("2022-11-20T20:00:00+04:00").getTime(),
-            })
+            }),
         ).toThrow("tournament terminated");
     });
 
     test("invalid prediction", () => {
         expect(() =>
             tournament.setPrediction("A11", {
-                from: AddressZero,
+                from: zeroAddress,
                 team1Goals: -1,
                 team2Goals: -4,
                 timestamp: new Date("2022-11-20T19:59:00+04:00").getTime(),
-            })
+            }),
         ).toThrow("invalid number of goals: -1");
     });
 
     test("invalid prediction", () => {
         expect(() =>
             tournament.setPrediction("A11", {
-                from: AddressZero,
+                from: zeroAddress,
                 team1Goals: 0,
                 team2Goals: -4,
                 timestamp: new Date("2022-11-20T19:59:00+04:00").getTime(),
-            })
+            }),
         ).toThrow("invalid number of goals: -4");
     });
 
     test("valid prediction", () => {
         const prediction = {
-            from: AddressZero,
+            from: zeroAddress,
             team1Goals: 1,
             team2Goals: 2,
             timestamp: new Date("2022-11-20T19:59:00+04:00").getTime(),
         };
         tournament.setPrediction("A11", prediction);
         expect(tournament.matches["A11"]?.predictions[prediction.from]).toEqual(
-            prediction
+            prediction,
         );
     });
 
@@ -99,7 +99,7 @@ describe("Tournament", () => {
             tournament.setResult("A1", {
                 team1Goals: 0,
                 team2Goals: 0,
-            })
+            }),
         ).toThrow("unknown match A1");
     });
 
@@ -108,7 +108,7 @@ describe("Tournament", () => {
             tournament.setResult("A11", {
                 team1Goals: -1,
                 team2Goals: 0,
-            })
+            }),
         ).toThrow("invalid number of goals: -1");
     });
 
@@ -117,7 +117,7 @@ describe("Tournament", () => {
             tournament.setResult("A11", {
                 team1Goals: 0,
                 team2Goals: -2,
-            })
+            }),
         ).toThrow("invalid number of goals: -2");
     });
 
@@ -172,14 +172,14 @@ describe("Tournament", () => {
             timestamp: 0,
         });
         expect(() => tournament.addMatch("A11", match)).toThrowError(
-            "can't change match A11 with predictions"
+            "can't change match A11 with predictions",
         );
 
         // set match result
         tournament.setResult("A11", { team1Goals: 0, team2Goals: 0 });
 
         expect(() => tournament.addMatch("A11", match)).toThrowError(
-            "can't change match A11 with result"
+            "can't change match A11 with result",
         );
     });
 

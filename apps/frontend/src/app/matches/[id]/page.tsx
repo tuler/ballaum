@@ -4,9 +4,7 @@ import { FC } from "react";
 import { Tournament, Wallet } from "ballaum-common";
 import { VStack } from "@chakra-ui/react";
 import { useAccount, useNetwork } from "wagmi";
-import { getAddress } from "@ethersproject/address";
-import { BigNumber } from "@ethersproject/bignumber";
-import { parseEther } from "@ethersproject/units";
+import { getAddress, parseEther } from "viem";
 
 import { useInspect } from "../../../hooks/inspect";
 import { MatchCard } from "../../../components/match";
@@ -33,7 +31,7 @@ const MatchPage: FC<PageProps> = ({ params: { id } }) => {
 
     // get DApp wallet
     const wallet = useInspect<Wallet>(
-        address ? `/wallet/${address}` : undefined
+        address ? `/wallet/${address}` : undefined,
     );
 
     // get connected network
@@ -53,8 +51,7 @@ const MatchPage: FC<PageProps> = ({ params: { id } }) => {
 
     // check if user has enough balance to enroll
     const fee = parseEther("0.01"); // XXX: fixed? should come in tournament data
-    const hasBalance =
-        !!wallet.report && BigNumber.from(wallet.report.ether).gte(fee);
+    const hasBalance = !!wallet.report && BigInt(wallet.report.ether) >= fee;
 
     const match = tournament?.matches[id];
     const canSetResult =
@@ -75,7 +72,6 @@ const MatchPage: FC<PageProps> = ({ params: { id } }) => {
                     match={match}
                     enrolled={enrolled}
                     hasBalance={hasBalance}
-                    chainId={network.chain?.id}
                 />
             )}
             {match && <MatchLeaderboardTable items={match.predictions} />}

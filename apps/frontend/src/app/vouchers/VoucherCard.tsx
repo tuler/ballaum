@@ -14,19 +14,19 @@ import {
     Text,
     Textarea,
 } from "@chakra-ui/react";
+import { useWaitForTransaction } from "wagmi";
+import { Address, Hex } from "viem";
+import {
+    useCartesiDAppExecuteVoucher,
+    usePrepareCartesiDAppExecuteVoucher,
+} from "../../hooks/rollups";
 
 import { FragmentType, useFragment } from "../../../generated-src/graphql";
 import { shortAddress } from "../../components/address";
-import {
-    useContractWrite,
-    usePrepareContractWrite,
-    useWaitForTransaction,
-} from "wagmi";
-import { IOutput__factory } from "@cartesi/rollups";
 import { VoucherItemFragmentDoc } from "../../../generated-src/graphql/graphql";
 
 export interface VoucherCardProps {
-    dapp: string;
+    dapp: Address;
     voucher: FragmentType<typeof VoucherItemFragmentDoc>;
 }
 
@@ -35,30 +35,44 @@ export const VoucherCard: FC<VoucherCardProps> = ({
     voucher: voucherFragment,
 }) => {
     const voucher = useFragment(VoucherItemFragmentDoc, voucherFragment);
-    const { config, error: pError } = usePrepareContractWrite({
-        address: dapp,
-        abi: IOutput__factory.abi,
-        functionName: "executeVoucher",
+    const { config, error: pError } = usePrepareCartesiDAppExecuteVoucher({
         enabled: !!voucher.proof, // only enabled if voucher has proof
         args: [
-            voucher.destination,
-            voucher.payload,
+            voucher.destination as Address,
+            voucher.payload as Hex,
             {
-                ...voucher.proof,
-                epochIndex: voucher.input.epoch.index,
-                inputIndex: voucher.input.index,
-                outputIndex: voucher.index,
+                validity: {
+                    inputIndexWithinEpoch: BigInt(
+                        voucher.proof?.validity.inputIndexWithinEpoch!,
+                    ),
+                    machineStateHash: voucher.proof?.validity
+                        .machineStateHash as Hex,
+                    noticesEpochRootHash: voucher.proof?.validity
+                        .noticesEpochRootHash as Hex,
+                    outputHashesInEpochSiblings: voucher.proof?.validity
+                        .outputHashesInEpochSiblings as Hex[],
+                    outputHashesRootHash: voucher.proof?.validity
+                        .outputHashesRootHash as Hex,
+                    outputHashInOutputHashesSiblings: voucher.proof?.validity
+                        .outputHashInOutputHashesSiblings as Hex[],
+                    outputIndexWithinInput: BigInt(
+                        voucher.proof?.validity.outputIndexWithinInput!,
+                    ),
+                    vouchersEpochRootHash: voucher.proof?.validity
+                        .vouchersEpochRootHash as Hex,
+                },
+                context: voucher.proof?.context as Hex,
             },
         ],
     });
 
-    const { data: tx, write } = useContractWrite(config);
+    const { data: tx, write } = useCartesiDAppExecuteVoucher(config);
     const { data, error, isError, isLoading } = useWaitForTransaction(tx);
 
     return (
         <Card>
             <CardHeader>
-                <Heading size="md">Voucher {voucher.id}</Heading>
+                <Heading size="md">Voucher {voucher.index}</Heading>
             </CardHeader>
             <CardBody>
                 <Text>Destination</Text>
@@ -66,7 +80,7 @@ export const VoucherCard: FC<VoucherCardProps> = ({
 
                 <Text mt={5}>Payload</Text>
                 <Text fontWeight="bold">
-                    {shortAddress(voucher.payload, 20)}
+                    {shortAddress(voucher.payload as Hex, 20)}
                 </Text>
                 {pError && pError.message && (
                     <Alert status="error" mt={5}>

@@ -66,9 +66,7 @@ const HomePage: FC = () => {
                         <MatchCard match={match} />
                     </NextLink>
                 ))}
-                {dapp && network.chain && (
-                    <AddMatchCard dapp={dapp} chainId={network.chain.id} />
-                )}
+                {dapp && network.chain && <AddMatchCard dapp={dapp} />}
             </VStack>
         </>
     );

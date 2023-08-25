@@ -3,7 +3,7 @@ import { FC } from "react";
 const Head: FC = () => {
     return (
         <>
-            <title>Bolão da Copa</title>
+            <title>SportsBeth - Bet with eth</title>
             <meta
                 name="viewport"
                 content="width=device-width, initial-scale=1"

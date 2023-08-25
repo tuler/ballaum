@@ -1,10 +1,10 @@
-import { toUtf8String } from "@ethersproject/strings";
 import useSWR, { Key, SWRResponse } from "swr";
 import { useNetwork } from "wagmi";
+import { bytesToString, toBytes } from "viem";
 
 const baseURL: Record<number, string> = {
-    5: "https://ballaum.goerli.rollups.staging.cartesi.io/inspect",
-    31337: "http://localhost:5005/inspect",
+    11155111: "https://ballaum.sepolia.rollups.staging.cartesi.io/inspect",
+    31337: "http://localhost:8080/inspect",
 };
 
 export enum InspectStatus {
@@ -45,7 +45,7 @@ export const useInspect = <TReport>(key: Key): UseInspect<TReport> => {
 
     // fetch only if connected to valid chain
     const swr = useSWR<InspectResponse>(() =>
-        network.chain && key ? `${baseURL[network.chain.id]}${key}` : false
+        network.chain && key ? `${baseURL[network.chain.id]}${key}` : false,
     );
 
     const response = swr.data;
@@ -56,7 +56,7 @@ export const useInspect = <TReport>(key: Key): UseInspect<TReport> => {
         response.reports.length > 0
     ) {
         const r = response.reports[0];
-        const data = toUtf8String(r.payload);
+        const data = bytesToString(toBytes(r.payload));
         report = JSON.parse(data) as TReport;
     }
 

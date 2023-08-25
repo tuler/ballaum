@@ -4,15 +4,15 @@ import "@rainbow-me/rainbowkit/styles.css";
 
 import { FC, ReactNode } from "react";
 import Image from "next/image";
-import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { goerli, hardhat } from "wagmi/chains";
+import { createConfig, configureChains, WagmiConfig } from "wagmi";
+import { Chain, foundry, sepolia } from "wagmi/chains";
 import {
     AvatarComponent,
     getDefaultWallets,
     RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
-import { publicProvider } from "wagmi/providers/public";
-import { infuraProvider } from "wagmi/providers/infura";
+import { publicProvider } from "@wagmi/core/providers/public";
+import { infuraProvider } from "@wagmi/core/providers/infura";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 
 const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
@@ -30,25 +30,31 @@ const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
 };
 
 // add hardhat only in development
-let supportedChains = [goerli];
+let supportedChains: Chain[] = [sepolia];
 if (process.env.NODE_ENV == "development") {
-    supportedChains = [hardhat, ...supportedChains];
+    supportedChains = [foundry, ...supportedChains];
 }
 
-const { chains, provider } = configureChains(supportedChains, [
-    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_ID! }),
-    publicProvider(),
-]);
+const { chains, publicClient, webSocketPublicClient } = configureChains(
+    supportedChains,
+    [
+        // infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_ID! }),
+        publicProvider(),
+    ],
+);
 
 const { connectors } = getDefaultWallets({
-    appName: "Bolão da Copa",
+    appName: "SportsBeth",
+    // projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!,
+    projectId: "70dc80c337384c58e99dcf69796a856e",
     chains,
 });
 
-const client = createClient({
+const config = createConfig({
     autoConnect: true,
     connectors,
-    provider,
+    publicClient,
+    webSocketPublicClient,
 });
 
 type Props = {
@@ -57,7 +63,7 @@ type Props = {
 
 export const Web3: FC<Props> = ({ children }) => {
     return (
-        <WagmiConfig client={client}>
+        <WagmiConfig config={config}>
             <RainbowKitProvider chains={chains} avatar={CustomAvatar}>
                 {children}
             </RainbowKitProvider>

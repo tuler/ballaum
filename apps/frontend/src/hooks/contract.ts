@@ -1,16 +1,17 @@
 "use client";
 
-import { useNetwork } from "wagmi";
 import { useEffect, useState } from "react";
+import { Address } from "viem";
+import { useNetwork } from "wagmi";
 
 const contract: Record<number, `0x${string}`> = {
-    5: "0xE6D220a982A668737E3782539892837071825ca1",
-    31337: "0xF8C694fd58360De278d5fF2276B7130Bfdc0192A",
+    11155111: "0xE6D220a982A668737E3782539892837071825ca1",
+    31337: "0x70ac08179605AF2D9e75782b8DEcDD3c22aA4D0C",
 };
 
-export const useDAppAddress = (): `0x${string}` | undefined => {
+export const useDAppAddress = (): Address | undefined => {
     const network = useNetwork();
-    const [address, setAddress] = useState<`0x${string}` | undefined>();
+    const [address, setAddress] = useState<Address | undefined>();
     useEffect(() => {
         if (network.chain) {
             setAddress(contract[network.chain.id]);

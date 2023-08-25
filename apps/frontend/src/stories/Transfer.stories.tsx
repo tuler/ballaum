@@ -1,7 +1,6 @@
 import React from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { BigNumber } from "@ethersproject/bignumber";
-import { parseEther } from "@ethersproject/units";
+import { parseEther } from "viem";
 
 import { Transfer } from "../components/WalletModal";
 
@@ -34,7 +33,7 @@ Unbalanced.args = {
     },
     dapp: {
         address: "0xE8dc6065B256c14A4274498F75c57ba1b37e9659",
-        balance: BigNumber.from(1),
+        balance: 1n,
     },
 };
 

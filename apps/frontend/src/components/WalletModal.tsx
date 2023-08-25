@@ -16,12 +16,9 @@ import {
     UseRadioProps,
     VStack,
 } from "@chakra-ui/react";
-import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
-import { MaxUint256, Zero } from "@ethersproject/constants";
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
-import { RxEnter, RxExit } from "react-icons/rx";
 import { AccountBalance, AccountBalanceProps } from "./AccountBalance";
-import { formatEther, parseEther } from "@ethersproject/units";
+import { formatEther, parseEther } from "viem";
 
 export type Operation = "deposit" | "withdraw";
 
@@ -36,11 +33,11 @@ const OperationRadioOption: FC<OperationRadioOptionProps> = (props) => {
 
     const checkedStyle = useColorModeValue(
         { bg: "blue.500", color: "white" },
-        { bg: "blue.500", color: "white" }
+        { bg: "blue.500", color: "white" },
     );
     const hoverStyle = useColorModeValue(
         { bg: "gray.100" },
-        { bg: "gray.100" }
+        { bg: "gray.100" },
     );
 
     return (
@@ -99,8 +96,8 @@ export type TransferProps = {
     user: AccountBalanceProps;
     dapp: AccountBalanceProps;
     isLoading: boolean;
-    onChange?: (operation: Operation | undefined, value: BigNumber) => void;
-    onSubmit: (operation: Operation, value: BigNumber) => void;
+    onChange?: (operation: Operation | undefined, value: bigint) => void;
+    onSubmit: (operation: Operation, value: bigint) => void;
 };
 
 export const Transfer: FC<TransferProps> = ({
@@ -113,13 +110,13 @@ export const Transfer: FC<TransferProps> = ({
     const [operation, setOperation] = useState<"deposit" | "withdraw">();
     const [error, setError] = useState<string>();
     const [amountStr, setAmountStr] = useState<string>("");
-    const [amount, setAmount] = useState<BigNumber>(Zero);
+    const [amount, setAmount] = useState<bigint>(0n);
 
     const set = (op: Operation | undefined, str: string | undefined) => {
-        let value: BigNumber = Zero;
+        let value: bigint = 0n;
         let error: string | undefined = undefined;
         try {
-            let max: BigNumberish = MaxUint256;
+            let max: bigint = 2n ^ 255n;
             if (op == "deposit") {
                 max = user.balance;
             } else if (op == "withdraw") {
@@ -127,9 +124,9 @@ export const Transfer: FC<TransferProps> = ({
             }
             if (str) {
                 const v = parseEther(str);
-                if (v.isNegative()) {
+                if (v < 0) {
                     error = "Invalid amount";
-                } else if (v.gt(max)) {
+                } else if (v > max) {
                     error = `Maximum amount is ${formatEther(max)} ETH`;
                 } else {
                     value = v;
@@ -150,9 +147,9 @@ export const Transfer: FC<TransferProps> = ({
     return (
         <VStack spacing={5}>
             <HStack spacing={5} w="100%" justify="space-around">
-                <AccountBalance {...user} digits={4} />
+                <AccountBalance {...user} digits={4n} />
                 <OperationRadio onChange={(op) => set(op, amountStr)} />
-                <AccountBalance {...dapp} digits={4} />
+                <AccountBalance {...dapp} digits={4n} />
             </HStack>
             <HStack w="100%" align="start">
                 <FormControl isInvalid={!!error}>
@@ -171,10 +168,8 @@ export const Transfer: FC<TransferProps> = ({
                     colorScheme="blue"
                     loadingText="Sending..."
                     isLoading={isLoading}
-                    disabled={amount.isZero() || !operation}
-                    onClick={() =>
-                        amount.isZero() || onSubmit(operation!, amount)
-                    }
+                    disabled={amount == 0n || !operation}
+                    onClick={() => amount == 0n || onSubmit(operation!, amount)}
                 >
                     Submit
                 </Button>
@@ -186,6 +181,6 @@ export const Transfer: FC<TransferProps> = ({
 export type WalletProps = {
     user: AccountBalanceProps;
     dapp: AccountBalanceProps;
-    onDeposit: (amount: BigNumber) => void;
-    onWithdraw: (amount: BigNumber) => void;
+    onDeposit: (amount: bigint) => void;
+    onWithdraw: (amount: bigint) => void;
 };

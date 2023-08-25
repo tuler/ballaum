@@ -12,22 +12,20 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import { InputFacet__factory } from "@cartesi/rollups";
+import { useWaitForTransaction } from "wagmi";
+import { ABI, Match } from "ballaum-common";
+import { Address, encodeFunctionData, formatEther, parseEther } from "viem";
+
 import {
-    useContractWrite,
-    usePrepareContractWrite,
-    useWaitForTransaction,
-} from "wagmi";
-import { Match, SetPredictionCodec } from "ballaum-common";
-import { BigNumber } from "ethers";
-import { formatEther, parseEther } from "@ethersproject/units";
+    useInputBoxAddInput,
+    usePrepareInputBoxAddInput,
+} from "../hooks/rollups";
 
 type PredictionCardProps = {
     enrolled: boolean;
     hasBalance: boolean;
-    dapp: string;
+    dapp: Address;
     match: Match;
-    chainId?: number;
 };
 
 export const PredictionCard: FC<PredictionCardProps> = ({
@@ -35,26 +33,26 @@ export const PredictionCard: FC<PredictionCardProps> = ({
     match,
     enrolled,
     hasBalance,
-    chainId,
 }) => {
     const [team1Goals, setTeam1Goals] = useState<string>();
     const [team2Goals, setTeam2Goals] = useState<string>();
 
-    const { config, error } = usePrepareContractWrite({
-        address: dapp,
-        abi: InputFacet__factory.abi,
-        functionName: "addInput",
-        chainId,
+    const { config, error } = usePrepareInputBoxAddInput({
         args: [
-            SetPredictionCodec.encode([
-                "wc2022",
-                match.id,
-                BigNumber.from(team1Goals || "0"),
-                BigNumber.from(team2Goals || "0"),
-            ]),
+            dapp,
+            encodeFunctionData({
+                abi: ABI,
+                functionName: "setPrediction",
+                args: [
+                    "wc2022",
+                    match.id,
+                    parseInt(team1Goals || "0"),
+                    parseInt(team2Goals || "0"),
+                ],
+            }),
         ],
     });
-    const { data: tx, write } = useContractWrite(config);
+    const { data: tx, write } = useInputBoxAddInput(config);
     const { data: receipt, isError, isLoading } = useWaitForTransaction(tx);
 
     const fee = parseEther("0.01");

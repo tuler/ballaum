@@ -1,6 +1,7 @@
 import { indexBy } from "underscore";
 import { User, Match, MatchPrediction, MatchResult } from "ballaum-common";
-import { getAddress } from "@ethersproject/address";
+import { getAddress } from "viem";
+
 import { CompleteScoreSystem, ScoreSystem } from "./score";
 
 export class Tournament {
@@ -37,12 +38,12 @@ export class Tournament {
         // validate number of goals
         if (prediction.team1Goals < 0) {
             throw new Error(
-                `invalid number of goals: ${prediction.team1Goals}`
+                `invalid number of goals: ${prediction.team1Goals}`,
             );
         }
         if (prediction.team2Goals < 0) {
             throw new Error(
-                `invalid number of goals: ${prediction.team2Goals}`
+                `invalid number of goals: ${prediction.team2Goals}`,
             );
         }
 
@@ -112,7 +113,7 @@ export class Tournament {
         const leaderboard = Object.entries(scores).sort(
             ([_u1, score1], [_u2, score2]) => {
                 return score2 - score1;
-            }
+            },
         );
 
         // returns winners, plurar, because users may be tied in first place

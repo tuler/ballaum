@@ -1,6 +1,6 @@
 import React from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { parseEther } from "@ethersproject/units";
+import { parseEther } from "viem";
 
 import { DAppWalletComponent } from "../app/DAppWallet";
 
