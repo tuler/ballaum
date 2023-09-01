@@ -42,7 +42,7 @@ const MatchPage: FC<PageProps> = ({ params: { id } }) => {
         report: tournament,
         error,
         data,
-    } = useInspect<Tournament>(`/tournaments/wc2022/matches/${id}`);
+    } = useInspect<Tournament>(`/tournaments/libertadores2023/matches/${id}`);
     const loading = !error && !data;
 
     // flag if user is already enrolled in tournament

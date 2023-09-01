@@ -240,12 +240,12 @@ const terminate = (tournamentId: string, metadata: RequestMetadata) => {
     return "accept";
 };
 
-// add world cup 2022
-import matches from "./wc2022/matches";
+// add libertadores 2023
+import matches from "./libertadores2023/matches";
 const manager: Record<number, string> = {
     31337: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", // localhost
     11155111: "0x2218B3b41581E3B3fea3d1CB5e37d9C66fa5d3A0", // sepolia
 };
-tournaments["wc2022"] = new Tournament(manager[chainId], matches);
+tournaments["libertadores2023"] = new Tournament(manager[chainId], matches);
 
 app.start().catch((e) => process.exit(1));

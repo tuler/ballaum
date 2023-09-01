@@ -35,7 +35,7 @@ export const AddMatchCard: FC<AddMatchCardProps> = ({ dapp }) => {
             encodeFunctionData({
                 abi: ABI,
                 functionName: "addMatch",
-                args: ["wc2022", id, team1, team2, start],
+                args: ["libertadores2023", id, team1, team2, start],
             }),
         ],
     });

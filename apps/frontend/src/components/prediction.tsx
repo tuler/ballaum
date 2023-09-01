@@ -44,7 +44,7 @@ export const PredictionCard: FC<PredictionCardProps> = ({
                 abi: ABI,
                 functionName: "setPrediction",
                 args: [
-                    "wc2022",
+                    "libertadores2023",
                     match.id,
                     parseInt(team1Goals || "0"),
                     parseInt(team2Goals || "0"),
