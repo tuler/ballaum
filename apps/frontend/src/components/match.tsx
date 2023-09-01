@@ -13,14 +13,14 @@ import calendar from "dayjs/plugin/calendar";
 dayjs.extend(calendar);
 
 import { Match } from "ballaum-common";
-import { Flag } from "./flag";
+import { Team } from "./team";
 
 type MatchCardProps = {
     match: Match;
 };
 
 export const MatchCard: FC<MatchCardProps> = ({ match }) => {
-    const countryName = (code: string): string =>
+    const teamName = (code: string): string =>
         code.length > 3 ? code.substring(3) : code;
 
     return (
@@ -33,8 +33,8 @@ export const MatchCard: FC<MatchCardProps> = ({ match }) => {
                         </Text>
                     </Center>
                     <HStack spacing={5}>
-                        <Text>{countryName(match.team1)}</Text>
-                        <Flag country={match.team1} />
+                        <Text>{teamName(match.team1)}</Text>
+                        <Team id={match.team1} />
                         {match.result ? (
                             <Heading>{match.result.team1Goals}</Heading>
                         ) : (
@@ -46,8 +46,8 @@ export const MatchCard: FC<MatchCardProps> = ({ match }) => {
                         ) : (
                             <Heading width={16}></Heading>
                         )}
-                        <Flag country={match.team2} />
-                        <Text>{countryName(match.team2)}</Text>
+                        <Team id={match.team2} />
+                        <Text>{teamName(match.team2)}</Text>
                     </HStack>
                 </VStack>
             </CardBody>

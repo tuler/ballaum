@@ -1,13 +1,14 @@
 import { FC } from "react";
 import { Text } from "@chakra-ui/react";
+import { Address as Address_ } from "viem";
 
 type AddressProps = {
-    address?: string;
+    address?: Address_;
 };
 
 export const shortAddress = (
-    address: string | undefined,
-    size: number = 8
+    address: Address_ | undefined,
+    size: number = 8,
 ): string | undefined => {
     if (address) {
         size = Math.min(size, address.length);

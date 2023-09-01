@@ -41,7 +41,7 @@ const HomePage: FC = () => {
         report: tournament,
         error,
         data,
-    } = useInspect<Tournament>(`/tournaments/wc2022`);
+    } = useInspect<Tournament>(`/tournaments/libertadores2023`);
     const loading = !error && !data;
     const list = Object.values(tournament?.matches ?? {}).sort(sort);
 
@@ -66,9 +66,7 @@ const HomePage: FC = () => {
                         <MatchCard match={match} />
                     </NextLink>
                 ))}
-                {dapp && network.chain && (
-                    <AddMatchCard dapp={dapp} chainId={network.chain.id} />
-                )}
+                {dapp && network.chain && <AddMatchCard dapp={dapp} />}
             </VStack>
         </>
     );

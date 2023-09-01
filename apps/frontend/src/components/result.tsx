@@ -10,16 +10,17 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
+import { useWaitForTransaction } from "wagmi";
+import { Address, encodeFunctionData } from "viem";
+import { ABI, Match } from "ballaum-common";
+
 import {
-    useContractWrite,
-    usePrepareContractWrite,
-    useWaitForTransaction,
-} from "wagmi";
-import { InputFacet__factory } from "@cartesi/rollups";
-import { Match, SetResultCodec } from "ballaum-common";
+    useInputBoxAddInput,
+    usePrepareInputBoxAddInput,
+} from "../hooks/rollups";
 
 type ResultCardProps = {
-    dapp: string;
+    dapp: Address;
     match: Match;
 };
 
@@ -27,20 +28,22 @@ export const ResultCard: FC<ResultCardProps> = ({ dapp, match }) => {
     const [team1Goals, setTeam1Goals] = useState<string>();
     const [team2Goals, setTeam2Goals] = useState<string>();
 
-    const { config, error } = usePrepareContractWrite({
-        address: dapp,
-        abi: InputFacet__factory.abi,
-        functionName: "addInput",
+    const { config, error } = usePrepareInputBoxAddInput({
         args: [
-            SetResultCodec.encode([
-                "wc2022",
-                match.id,
-                parseInt(team1Goals ?? "0"),
-                parseInt(team2Goals ?? "0"),
-            ]),
+            dapp,
+            encodeFunctionData({
+                abi: ABI,
+                functionName: "setResult",
+                args: [
+                    "libertadores2023",
+                    match.id,
+                    parseInt(team1Goals ?? "0"),
+                    parseInt(team2Goals ?? "0"),
+                ],
+            }),
         ],
     });
-    const { data: tx, write } = useContractWrite(config);
+    const { data: tx, write } = useInputBoxAddInput(config);
     const { data: receipt, isError, isLoading } = useWaitForTransaction(tx);
 
     return (

@@ -11,17 +11,17 @@ import {
     ButtonGroup,
     Button,
 } from "@chakra-ui/react";
-import { TerminateCodec, Tournament } from "ballaum-common";
+import { Address, encodeFunctionData } from "viem";
+import { ABI, Tournament } from "ballaum-common";
+import { useAccount, useWaitForTransaction } from "wagmi";
+
 import {
-    useAccount,
-    useContractWrite,
-    usePrepareContractWrite,
-    useWaitForTransaction,
-} from "wagmi";
-import { InputFacet__factory } from "@cartesi/rollups";
+    useInputBoxAddInput,
+    usePrepareInputBoxAddInput,
+} from "../hooks/rollups";
 
 type LeaderboardTableProps = {
-    dapp: string;
+    dapp: Address;
     tournament?: Tournament;
 };
 
@@ -41,15 +41,19 @@ export const LeaderboardTable: FC<LeaderboardTableProps> = ({
         .map<UserScore>(([user, score]) => ({ user, score }))
         .sort((a, b) => b.score - a.score);
 
-    const { config, error } = usePrepareContractWrite({
-        address: dapp,
-        abi: InputFacet__factory.abi,
-        functionName: "addInput",
+    const { config, error } = usePrepareInputBoxAddInput({
         enabled: !!tournament,
-        args: [TerminateCodec.encode([tournament?.id ?? ""])],
+        args: [
+            dapp,
+            encodeFunctionData({
+                abi: ABI,
+                functionName: "terminate",
+                args: [tournament?.id ?? ""],
+            }),
+        ],
     });
 
-    const { data: tx, write } = useContractWrite(config);
+    const { data: tx, write } = useInputBoxAddInput(config);
     const { data: receipt, isError, isLoading } = useWaitForTransaction(tx);
 
     return (

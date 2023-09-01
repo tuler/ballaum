@@ -1,17 +1,10 @@
 "use client";
 
 import { FC } from "react";
-import {
-    Box,
-    Button,
-    HStack,
-    Skeleton,
-    Text,
-    useDisclosure,
-} from "@chakra-ui/react";
+import { Button, HStack, Text, useDisclosure } from "@chakra-ui/react";
 import { useAccount, useBalance } from "wagmi";
+import { Address } from "viem";
 import { Wallet } from "ballaum-common";
-import { BigNumber } from "@ethersproject/bignumber";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 
 import { formatEther } from "../utils/format";
@@ -20,12 +13,12 @@ import DAppWalletModal from "./DAppWalletModal";
 import { shortAddress } from "../components/address";
 
 export type DAppWalletProps = {
-    dapp: `0x${string}`;
+    dapp: Address;
 };
 
 export type DAppWalletComponentProps = {
-    dapp: `0x${string}`;
-    balance: BigNumber;
+    dapp: Address;
+    balance: bigint;
     onClick?: () => void;
 };
 
@@ -62,7 +55,7 @@ export const DAppWalletComponent: FC<DAppWalletComponentProps> = ({
             onClick={onClick}
         >
             <HStack>
-                <Text>{formatEther(balance, 4, true)} ETH</Text>
+                <Text>{formatEther(balance, 4n)} ETH</Text>
                 <HStack bg="gray.100" p={1} borderRadius="lg">
                     <Jazzicon diameter={22} seed={jsNumberForAddress(dapp)} />
                     <Text>{shortAddress(dapp)}</Text>
@@ -78,7 +71,7 @@ const DAppWallet: FC<DAppWalletProps> = ({ dapp }) => {
     const { address } = useAccount();
     const { data: balance } = useBalance({ address });
     const dappWallet = useInspect<Wallet>(
-        address ? `/wallet/${address}` : null
+        address ? `/wallet/${address}` : null,
     );
 
     return (
@@ -86,7 +79,7 @@ const DAppWallet: FC<DAppWalletProps> = ({ dapp }) => {
             {dappWallet.report && (
                 <DAppWalletComponent
                     dapp={dapp}
-                    balance={BigNumber.from(dappWallet.report.ether)}
+                    balance={BigInt(dappWallet.report.ether)}
                     onClick={walletModal.onOpen}
                 />
             )}
@@ -95,7 +88,7 @@ const DAppWallet: FC<DAppWalletProps> = ({ dapp }) => {
                     user={{ address, balance: balance.value }}
                     dapp={{
                         address: dapp,
-                        balance: BigNumber.from(dappWallet.report.ether),
+                        balance: BigInt(dappWallet.report.ether),
                     }}
                     isOpen={walletModal.isOpen}
                     onClose={walletModal.onClose}

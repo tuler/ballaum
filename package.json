@@ -12,13 +12,18 @@
     },
     "scripts": {
         "build": "turbo run build",
+        "build:docker": "docker buildx build -t ballaum -f apps/backend/Dockerfile --load .",
+        "build:sunodo": "sunodo build --from-image ballaum",
         "dev": "turbo run dev",
         "lint": "turbo run lint",
         "prettier": "prettier --check **/*.ts",
         "test": "turbo run test"
     },
     "devDependencies": {
-        "prettier": "2.8.0",
-        "turbo": "^1.6.3"
+        "prettier": "^3",
+        "turbo": "^1"
+    },
+    "dependencies": {
+        "@changesets/cli": "^2"
     }
 }

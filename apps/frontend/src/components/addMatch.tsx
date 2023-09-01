@@ -1,4 +1,3 @@
-import { InputFacet__factory } from "@cartesi/rollups";
 import {
     Button,
     ButtonGroup,
@@ -9,34 +8,38 @@ import {
     Input,
     Text,
 } from "@chakra-ui/react";
-import { AddMatchCodec } from "ballaum-common";
+import { ABI } from "ballaum-common";
 import { DatePickerInput } from "chakra-datetime-picker";
 import { FC, useState } from "react";
+import { Address, encodeFunctionData } from "viem";
+import { useWaitForTransaction } from "wagmi";
+
 import {
-    useContractWrite,
-    usePrepareContractWrite,
-    useWaitForTransaction,
-} from "wagmi";
+    useInputBoxAddInput,
+    usePrepareInputBoxAddInput,
+} from "../hooks/rollups";
 
 interface AddMatchCardProps {
-    dapp: string;
-    chainId?: number;
+    dapp: Address;
 }
 
-export const AddMatchCard: FC<AddMatchCardProps> = ({ chainId, dapp }) => {
+export const AddMatchCard: FC<AddMatchCardProps> = ({ dapp }) => {
     const [id, setId] = useState<string>("");
     const [team1, setTeam1] = useState<string>("");
     const [team2, setTeam2] = useState<string>("");
-    const [start, setStart] = useState<number>(0);
+    const [start, setStart] = useState<bigint>(0n);
 
-    const { config, error } = usePrepareContractWrite({
-        address: dapp,
-        abi: InputFacet__factory.abi,
-        functionName: "addInput",
-        chainId,
-        args: [AddMatchCodec.encode(["wc2022", id, team1, team2, start])],
+    const { config, error } = usePrepareInputBoxAddInput({
+        args: [
+            dapp,
+            encodeFunctionData({
+                abi: ABI,
+                functionName: "addMatch",
+                args: ["libertadores2023", id, team1, team2, start],
+            }),
+        ],
     });
-    const { data: tx, write } = useContractWrite(config);
+    const { data: tx, write } = useInputBoxAddInput(config);
     const { data: receipt, isError, isLoading } = useWaitForTransaction(tx);
 
     return (
@@ -48,7 +51,9 @@ export const AddMatchCard: FC<AddMatchCardProps> = ({ chainId, dapp }) => {
                 ></Input>
                 <DatePickerInput
                     showTimeSelector
-                    onChange={(_, day) => day && setStart(day.unix() * 1000)}
+                    onChange={(_, day) =>
+                        day && setStart(BigInt(day.unix()) * 1000n)
+                    }
                 />
                 <HStack>
                     <Input

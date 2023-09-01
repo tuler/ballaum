@@ -1,7 +1,7 @@
 import React from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
+import { parseEther } from "viem";
 
-import { parseEther } from "@ethersproject/units";
 import DAppWalletModal from "../app/DAppWalletModal";
 
 export default {

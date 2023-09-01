@@ -1,9 +1,0 @@
-{
-    "compilerOptions": {
-        "lib": ["ES2020"],
-        "sourceMap": true
-    },
-    "extends": "tsconfig/base.json",
-    "include": ["."],
-    "exclude": ["dist", "build", "node_modules"]
-}
